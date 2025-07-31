@@ -29,4 +29,9 @@
     <ProjectReference Include="..\..\src\WorkoutTracker.Web.Host\WorkoutTracker.Web.Host.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="SonarAnalyzer.CSharp" Version="10.15.0.120848" />
+    <PackageReference Update="StyleCop.Analyzers" Version="1.1.118" />
+  </ItemGroup>
+
 </Project>
