@@ -12,10 +12,10 @@ public class Result
 
     protected internal Result(bool isSuccess, Error error)
     {
-        if (isSuccess && error != Error.None)
+        if (isSuccess && error != DomainErrors.None)
             throw new SuccessfulResultCannotHaveErrorsException();
 
-        if (!isSuccess && error == Error.None)
+        if (!isSuccess && error == DomainErrors.None)
             throw new FailedResultMustHaveErrorsException();
 
         IsSuccess = isSuccess;
@@ -35,7 +35,7 @@ public class Result
     }
 
     public static Result Success()
-        => new Result(true, Error.None);
+        => new Result(true, DomainErrors.None);
 
     public static Result Failure(Error error)
         => new Result(false, error ?? throw new NullErrorException());
@@ -44,7 +44,7 @@ public class Result
         => new Result(false, errors ?? throw new EmptyArrayException());
 
     public static Result<TValue> Success<TValue>(TValue value)
-        => new Result<TValue>(value, true, Error.None);
+        => new Result<TValue>(value, true, DomainErrors.None);
 
     public static Result<TValue> Failure<TValue>(Error error)
         => new Result<TValue>(default!, false, error ?? throw new NullErrorException());

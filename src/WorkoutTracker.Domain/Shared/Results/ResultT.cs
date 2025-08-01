@@ -24,7 +24,7 @@ public class Result<TValue> : Result
         => IsSuccess ? _value : defaultValue;
 
     public static implicit operator Result<TValue>(TValue value)
-        => new Result<TValue>(value, true, Error.None);
+        => new Result<TValue>(value, true, DomainErrors.None);
 
     public Result<TValue> ToResult(TValue value) => value;
 }
