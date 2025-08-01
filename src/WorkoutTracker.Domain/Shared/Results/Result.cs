@@ -1,23 +1,37 @@
 namespace WorkoutTracker.Domain.Shared.Results;
 
+using System.Diagnostics.CodeAnalysis;
 using WorkoutTracker.Domain.Shared.Errors;
 using WorkoutTracker.Domain.Shared.Exceptions;
 
-public class Result : IEquatable<Result>
+public class Result
 {
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
-    public Error Error { get; }
+    public Error[] Errors { get; }
 
     protected internal Result(bool isSuccess, Error error)
     {
         if (isSuccess && error != Error.None)
-            throw new InvalidOperationException("Successful result cannot have an error.");
+            throw new SuccessfulResultCannotHaveErrorsException();
+
         if (!isSuccess && error == Error.None)
-            throw new InvalidOperationException("Failed result must have an error.");
+            throw new FailedResultMustHaveErrorsException();
 
         IsSuccess = isSuccess;
-        Error = error ?? throw new NullErrorException();
+        Errors = new[] { error };
+    }
+
+    protected internal Result(bool isSuccess, [NotNull] Error[] errors)
+    {
+        if (isSuccess && errors.Length > 0)
+            throw new SuccessfulResultCannotHaveErrorsException();
+
+        if (!isSuccess && errors.Length == 0)
+            throw new FailedResultMustHaveErrorsException();
+
+        IsSuccess = isSuccess;
+        Errors = errors;
     }
 
     public static Result Success()
@@ -26,18 +40,35 @@ public class Result : IEquatable<Result>
     public static Result Failure(Error error)
         => new Result(false, error ?? throw new NullErrorException());
 
-    public bool Equals(Result? other)
-        => other is not null && IsSuccess == other.IsSuccess && Error == other.Error;
+    public static Result Failure(params Error[] errors)
+        => new Result(false, errors ?? throw new EmptyArrayException());
 
-    public override bool Equals(object? obj)
-        => Equals(obj as Result);
+    public static Result<TValue> Success<TValue>(TValue value)
+        => new Result<TValue>(value, true, Error.None);
 
-    public override int GetHashCode()
-        => HashCode.Combine(IsSuccess, Error);
+    public static Result<TValue> Failure<TValue>(Error error)
+        => new Result<TValue>(default!, false, error ?? throw new NullErrorException());
 
-    public static bool operator ==(Result? left, Result? right)
-        => left is not null && left.Equals(right);
+    public static Result<TValue> Failure<TValue>(params Error[] errors)
+        => new Result<TValue>(default!, false, errors ?? throw new EmptyArrayException());
 
-    public static bool operator !=(Result? left, Result? right)
-        => !(left == right);
+    public static Result<TValue> Ensure<TValue>(
+        TValue value,
+        [NotNull] Func<TValue, bool> predicate, Error error)
+    {
+        return predicate(value)
+            ? Success(value)
+            : Failure<TValue>(error);
+    }
+
+    public static Result<TValue> Combine<TValue>(params Result<TValue>[] results)
+    {
+        if (results == null || results.Length == 0)
+            throw new NoValueInCombinedResultsException();
+
+        if (results.Any(r => r.IsFailure))
+            return Failure<TValue>(results.SelectMany(r => r.Errors).Distinct().ToArray());
+
+        return Success(results[0].ValueOrDefault());
+    }
 }

@@ -1,27 +1,30 @@
-﻿namespace WorkoutTracker.Domain.Shared.Primitives;
+namespace WorkoutTracker.Domain.Shared.Primitives;
 
-public abstract class Entity
-    : IEquatable<Entity>
+public abstract class Entity<TId>
+    : IEquatable<Entity<TId>>
 {
-    public Guid Id { get; private init; }
+    public TId Id { get; private init; }
 
-    protected Entity(Guid id)
+    protected Entity(TId id)
     {
-        Id = id;
+        Id = id ?? throw new ArgumentNullException(nameof(id), "Id cannot be null.");
     }
 
-    public static bool operator ==(Entity? left, Entity? right)
+    public static bool operator ==(Entity<TId>? left, Entity<TId>? right)
         => left is not null && left.Equals(right);
 
-    public static bool operator !=(Entity? left, Entity? right)
+    public static bool operator !=(Entity<TId>? left, Entity<TId>? right)
         => !(left == right);
 
-    public bool Equals(Entity? other)
-        => other is not null && Id == other.Id;
+    public bool Equals(Entity<TId>? other)
+        => other is not null && ReferenceEquals(this, other) && Id!.Equals(other.Id);
 
     public override bool Equals(object? obj)
-        => obj is not null && obj.GetType() == GetType() && obj is Entity entity && entity.Id == Id;
+        => obj is not null
+        && obj.GetType() == GetType()
+        && obj is Entity<TId> entity
+        && Id!.Equals(entity.Id);
 
     public override int GetHashCode()
-        => Id.GetHashCode();
+        => Id!.GetHashCode();
 }

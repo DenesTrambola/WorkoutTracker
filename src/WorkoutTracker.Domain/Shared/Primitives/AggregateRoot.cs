@@ -1,10 +1,10 @@
 namespace WorkoutTracker.Domain.Shared.Primitives;
 
-public class AggregateRoot : Entity
+public class AggregateRoot<TId> : Entity<TId>
 {
     private readonly List<IDomainEvent> _domainEvents = [];
 
-    protected AggregateRoot(Guid id)
+    protected AggregateRoot(TId id)
         : base(id)
     {
     }
