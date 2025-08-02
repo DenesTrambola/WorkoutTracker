@@ -7,17 +7,25 @@ using WorkoutTracker.Domain.Shared.Results;
 
 public class Description : ValueObject
 {
-    public string Value { get; private set; }
+    public const short MaxLength = 500;
 
-    private Description(string value) => Value = value;
+    public string Text { get; private set; }
 
-    public static Result<Description> Create(string value)
+    private Description(string text)
+        => Text = text;
+
+    public static Result<Description?> Create(string? text)
+        => LengthCheck(text)
+        .Map(t => t is null ? null : new Description(t));
+
+    private static Result<string?> LengthCheck(string? text)
+        => Result.Ensure(
+            text,
+            text => MaxLength > text?.Length,
+            DomainErrors.Description.TooLong);
+
+    public override IEnumerable<object> GetAtomicValues()
     {
-        if (string.IsNullOrWhiteSpace(value))
-            return Result.Failure<Description>(DomainErrors.DescriptionErrors.NullOrWhiteSpace);
-
-        return new Description(value);
+        yield return Text;
     }
-
-    public override IEnumerable<object> GetAtomicValues() => throw new NotImplementedException();
 }

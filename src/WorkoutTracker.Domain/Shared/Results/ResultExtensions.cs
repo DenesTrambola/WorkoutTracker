@@ -53,12 +53,11 @@ public static class ResultExtensions
     }
 
     public static Result<TOut> Map<TIn, TOut>(
-        [NotNull] this Result<TOut> result,
-        [NotNull] Func<TOut> mapFunc)
+        [NotNull] this Result<TIn> result,
+        [NotNull] Func<TIn, TOut> mapFunc)
     {
-        if (result.IsFailure)
-            return Result.Failure<TOut>(result.Errors);
-
-        return Result.Success<TOut>(mapFunc());
+        return result.IsSuccess
+            ? Result.Success(mapFunc(result.ValueOrDefault()))
+            : Result.Failure<TOut>(result.Errors);
     }
 }

@@ -2,5 +2,27 @@ namespace WorkoutTracker.Domain.Shared.Errors;
 
 public static partial class DomainErrors
 {
-    public static readonly Error None = new Error(string.Empty, string.Empty);
+    public static readonly Error None = new Error(
+        string.Empty,
+        string.Empty);
+
+    internal static Error Empty(string name)
+        => new Error(
+            $"{name}.Empty",
+            $"{name} cannot be empty.");
+
+    internal static Error TooLong(string name, short maxLength)
+        => new Error(
+            $"{name}.TooLong",
+            $"{name} exceeds the maximum allowed length ({maxLength}).");
+
+    internal static Error InvalidFormat(string name)
+        => new Error(
+            $"{name}.InvalidFormat",
+            $"{name} is not in a valid format.");
+
+    internal static Error AlreadyExists(string name)
+        => new Error(
+            $"{name}.AlreadyExists",
+            $"{name} already exists.");
 }

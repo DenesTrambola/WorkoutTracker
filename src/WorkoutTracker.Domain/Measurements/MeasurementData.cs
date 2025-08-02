@@ -29,7 +29,5 @@ public class MeasurementData : Entity<MeasurementDataId>
         MeasurementDataValue value,
         Comment? comment,
         MeasurementId measurementId)
-    {
-        return new MeasurementData(id, value, comment, measurementId);
-    }
+        => new MeasurementData(id, value, comment, measurementId);
 }

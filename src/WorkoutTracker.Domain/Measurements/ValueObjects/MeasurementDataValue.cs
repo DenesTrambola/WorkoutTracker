@@ -2,20 +2,17 @@ namespace WorkoutTracker.Domain.Measurements.ValueObjects;
 
 using System.Collections.Generic;
 using WorkoutTracker.Domain.Shared.Primitives;
+using WorkoutTracker.Domain.Shared.Results;
 
 public class MeasurementDataValue : ValueObject
 {
-    public int Value { get; private set; }
+    public short Value { get; private set; }
 
-    private MeasurementDataValue(int value)
-    {
-        Value = value;
-    }
+    private MeasurementDataValue(short value)
+        => Value = value;
 
-    public static MeasurementDataValue Create(int value)
-    {
-        return new MeasurementDataValue(value);
-    }
+    public static Result<MeasurementDataValue> Create(short value)
+        => new MeasurementDataValue(value);
 
     public override IEnumerable<object> GetAtomicValues()
     {

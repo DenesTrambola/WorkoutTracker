@@ -19,7 +19,7 @@ public class Measurement : AggregateRoot<MeasurementId>
     private Measurement(
         MeasurementId id,
         Name name,
-        Description description,
+        Description? description,
         MeasurementUnit unit,
         UserId userId)
         : base(id)
@@ -33,10 +33,8 @@ public class Measurement : AggregateRoot<MeasurementId>
     public static Measurement Create(
         MeasurementId id,
         Name name,
-        Description description,
+        Description? description,
         MeasurementUnit unit,
         UserId userId)
-    {
-        return new Measurement(id, name, description, unit, userId);
-    }
+        => new Measurement(id, name, description, unit, userId);
 }

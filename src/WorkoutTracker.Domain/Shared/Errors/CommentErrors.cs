@@ -2,10 +2,10 @@ namespace WorkoutTracker.Domain.Shared.Errors;
 
 public static partial class DomainErrors
 {
-    public static class Description
+    public static class Comment
     {
         public static readonly Error TooLong = TooLong(
-            nameof(Description),
-            ValueObjects.Description.MaxLength);
+            nameof(Comment),
+            ValueObjects.Comment.MaxLength);
     }
 }

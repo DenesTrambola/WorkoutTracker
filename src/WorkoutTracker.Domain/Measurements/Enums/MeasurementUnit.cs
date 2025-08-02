@@ -2,7 +2,7 @@ namespace WorkoutTracker.Domain.Measurements.Enums;
 
 public enum MeasurementUnit
 {
-    Centimeter,
-    Kilogram,
-    Percentage,
+    Kilogram = 0,
+    Centimeter = 1,
+    Percentage = 2,
 }

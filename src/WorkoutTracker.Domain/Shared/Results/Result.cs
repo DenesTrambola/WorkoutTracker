@@ -52,13 +52,25 @@ public class Result
     public static Result<TValue> Failure<TValue>(params Error[] errors)
         => new Result<TValue>(default!, false, errors ?? throw new EmptyArrayException());
 
+    public static Result Ensure(bool condition, [NotNull] Error error)
+        => condition ? Success() : Failure(error);
+
     public static Result<TValue> Ensure<TValue>(
         TValue value,
         [NotNull] Func<TValue, bool> predicate, Error error)
     {
-        return predicate(value)
-            ? Success(value)
-            : Failure<TValue>(error);
+        return predicate(value) ? Success(value) : Failure<TValue>(error);
+    }
+
+    public static Result Combine(params Result[] results)
+    {
+        if (results == null || results.Length == 0)
+            throw new NoValueInCombinedResultsException();
+
+        if (results.Any(r => r.IsFailure))
+            return Failure(results.SelectMany(r => r.Errors).Distinct().ToArray());
+
+        return Success();
     }
 
     public static Result<TValue> Combine<TValue>(params Result<TValue>[] results)
@@ -70,5 +82,19 @@ public class Result
             return Failure<TValue>(results.SelectMany(r => r.Errors).Distinct().ToArray());
 
         return Success(results[0].ValueOrDefault());
+    }
+
+    public static Result<TOut> Zip<TIn1, TIn2, TOut>(
+        [NotNull] Result<TIn1> first,
+        [NotNull] Result<TIn2> second,
+        [NotNull] Func<TIn1, TIn2, TOut> map)
+    {
+        if (first.IsFailure || second.IsFailure)
+        {
+            var allErrors = first.Errors.Concat(second.Errors).Distinct().ToArray();
+            return Result.Failure<TOut>(allErrors);
+        }
+
+        return Result.Success(map(first.ValueOrDefault(), second.ValueOrDefault()));
     }
 }
