@@ -25,4 +25,9 @@ public static partial class DomainErrors
         => new Error(
             $"{name}.AlreadyExists",
             $"{name} already exists.");
+
+    internal static Error Null(string name)
+        => new Error(
+            $"{name}.Null",
+            $"{name} cannot be null.");
 }

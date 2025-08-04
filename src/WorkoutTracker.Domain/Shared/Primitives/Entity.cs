@@ -5,6 +5,11 @@ public abstract class Entity<TId>
 {
     public TId Id { get; private init; }
 
+    protected Entity()
+    {
+        Id = default!;
+    }
+
     protected Entity(TId id)
     {
         Id = id ?? throw new ArgumentNullException(nameof(id), "Id cannot be null.");

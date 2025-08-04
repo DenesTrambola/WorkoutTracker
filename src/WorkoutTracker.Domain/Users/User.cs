@@ -11,10 +11,10 @@ using WorkoutTracker.Domain.Users.ValueObjects;
 
 public class User : AggregateRoot<UserId>
 {
-    private readonly List<Routine> _routines = new();
-    private readonly List<Workout> _workouts = new();
-    private readonly List<Exercise> _exercises = new();
-    private readonly List<Measurement> _measurements = new();
+    private readonly List<Routine> _routines = [];
+    private readonly List<Workout> _workouts = [];
+    private readonly List<Exercise> _exercises = [];
+    private readonly List<Measurement> _measurements = [];
 
     public Username Username { get; private set; }
     public PasswordHash PasswordHash { get; private set; }
@@ -28,6 +28,14 @@ public class User : AggregateRoot<UserId>
     public IReadOnlyCollection<Workout> Workouts => _workouts.AsReadOnly();
     public IReadOnlyCollection<Exercise> Exercises => _exercises.AsReadOnly();
     public IReadOnlyCollection<Measurement> Measurements => _measurements.AsReadOnly();
+
+    private User()
+    {
+        Username = null!;
+        PasswordHash = null!;
+        Email = null!;
+        FullName = null!;
+    }
 
     private User(
         UserId id,
@@ -61,5 +69,7 @@ public class User : AggregateRoot<UserId>
         UserRole role,
         DateOnly birthDate,
         DateTime createdOn)
-        => new User(id, username, passwordHash, email, fullName, gender, role, birthDate, createdOn);
+    {
+        return new User(id, username, passwordHash, email, fullName, gender, role, birthDate, createdOn);
+    }
 }

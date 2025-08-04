@@ -14,6 +14,12 @@ public class Visibility : ValueObject
     public static Result<Visibility> Create(bool isPublic)
         => new Visibility(isPublic);
 
+    public static Visibility Public()
+        => new Visibility(true);
+
+    public static Visibility Private()
+        => new Visibility(false);
+
     public override IEnumerable<object> GetAtomicValues()
     {
         yield return IsPublic;
