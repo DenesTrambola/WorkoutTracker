@@ -4,12 +4,9 @@ using WorkoutTracker.Domain.Shared.Errors;
 
 public static partial class DomainErrors
 {
-    public static class Routine
+    public static class ExercisePosition
     {
         public static readonly Error Null = Shared.Errors.DomainErrors.Null(
-            nameof(Routine));
-
-        public static readonly Error NotFound = Shared.Errors.DomainErrors.NotFound(
-            nameof(Routine));
+            nameof(ExercisePosition));
     }
 }

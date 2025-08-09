@@ -21,6 +21,11 @@ public static partial class DomainErrors
             $"{name}.InvalidFormat",
             $"{name} is not in a valid format.");
 
+    internal static Error InvalidValue(string name)
+        => new Error(
+            $"{name}.InvalidValue",
+            $"{name} does not have a valid value.");
+
     internal static Error AlreadyExists(string name)
         => new Error(
             $"{name}.AlreadyExists",
@@ -30,4 +35,9 @@ public static partial class DomainErrors
         => new Error(
             $"{name}.Null",
             $"{name} cannot be null.");
+
+    internal static Error NotFound(string name)
+        => new Error(
+            $"{name}.NotFound",
+            $"{name} was not found.");
 }

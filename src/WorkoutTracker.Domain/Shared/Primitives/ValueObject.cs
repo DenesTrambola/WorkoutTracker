@@ -1,8 +1,8 @@
-﻿namespace WorkoutTracker.Domain.Shared.Primitives;
+namespace WorkoutTracker.Domain.Shared.Primitives;
 
 public abstract class ValueObject : IEquatable<ValueObject>
 {
-    public abstract IEnumerable<object> GetAtomicValues();
+    public abstract IEnumerable<object?> GetAtomicValues();
 
     public static bool operator ==(ValueObject? left, ValueObject? right)
         => left is not null && left.Equals(right);

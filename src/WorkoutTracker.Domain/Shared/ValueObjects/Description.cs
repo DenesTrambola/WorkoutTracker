@@ -9,22 +9,36 @@ public class Description : ValueObject
 {
     public const short MaxLength = 500;
 
-    public string Text { get; private set; }
+    public string? Text { get; private set; }
 
-    private Description(string text)
-        => Text = text;
+    private Description(string? text)
+    {
+        Text = text;
+    }
 
-    public static Result<Description?> Create(string? text)
-        => LengthCheck(text)
-        .Map(t => t is null ? null : new Description(t));
+    public static Result<Description> Create(string? text)
+    {
+        return EnsureNotTooLong(text)
+            .Map(t => new Description(t));
+    }
 
-    private static Result<string?> LengthCheck(string? text)
-        => Result.Ensure(
+    private static Result<string?> EnsureNotTooLong(string? text)
+    {
+        return Result.Ensure(
             text,
             text => MaxLength > text?.Length,
             DomainErrors.Description.TooLong);
+    }
 
-    public override IEnumerable<object> GetAtomicValues()
+    public static Result<Description> EnsureNotNull(Description description)
+    {
+        return Result.Ensure(
+            description,
+            d => d is not null,
+            DomainErrors.Description.Null);
+    }
+
+    public override IEnumerable<object?> GetAtomicValues()
     {
         yield return Text;
     }

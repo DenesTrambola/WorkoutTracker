@@ -12,10 +12,13 @@ public class Username : ValueObject
     public string Login { get; private set; }
 
     private Username(string login)
-        => Login = login;
+    {
+        Login = login;
+    }
 
     public static Result<Username> Create(string login)
-        => Result.Combine(
+    {
+        return Result.Combine(
             Result.Ensure(
                 login,
                 login => !string.IsNullOrWhiteSpace(login),
@@ -24,19 +27,32 @@ public class Username : ValueObject
                 login,
                 login => login.Length <= MaxLength,
                 DomainErrors.Username.TooLong))
-        .Map(l => new Username(l));
+            .Map(l => new Username(l));
+    }
 
-    private static Result<string> EmptyCheck(string login)
-        => Result.Ensure(
+    private static Result<string> EnsureNotEmpty(string login)
+    {
+        return Result.Ensure(
             login,
             login => !string.IsNullOrWhiteSpace(login),
             DomainErrors.Username.Empty);
+    }
 
-    private static Result<string> LengthCheck(string login)
-        => Result.Ensure(
+    private static Result<string> EnsureNotTooLong(string login)
+    {
+        return Result.Ensure(
             login,
             login => login.Length <= MaxLength,
             DomainErrors.Username.TooLong);
+    }
+
+    public static Result<Username> EnsureNotNull(Username username)
+    {
+        return Result.Ensure(
+            username,
+            un => un is not null,
+            DomainErrors.Username.Null);
+    }
 
     public override IEnumerable<object> GetAtomicValues()
     {

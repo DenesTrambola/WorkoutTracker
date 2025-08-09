@@ -1,6 +1,7 @@
 namespace WorkoutTracker.Domain.Exercises.ValueObjects;
 
 using System.Collections.Generic;
+using WorkoutTracker.Domain.Exercises.Errors;
 using WorkoutTracker.Domain.Shared.Primitives;
 using WorkoutTracker.Domain.Shared.Results;
 
@@ -9,16 +10,32 @@ public class Visibility : ValueObject
     public bool IsPublic { get; private set; }
 
     private Visibility(bool isPublic)
-        => IsPublic = isPublic;
+    {
+        IsPublic = isPublic;
+    }
 
     public static Result<Visibility> Create(bool isPublic)
-        => new Visibility(isPublic);
+    {
+        return new Visibility(isPublic);
+    }
 
     public static Visibility Public()
-        => new Visibility(true);
+    {
+        return new Visibility(true);
+    }
 
     public static Visibility Private()
-        => new Visibility(false);
+    {
+        return new Visibility(false);
+    }
+
+    public static Result<Visibility> EnsureNotNull(Visibility visibility)
+    {
+        return Result.Ensure(
+            visibility,
+            v => v is not null,
+            DomainErrors.Visibility.Null);
+    }
 
     public override IEnumerable<object> GetAtomicValues()
     {

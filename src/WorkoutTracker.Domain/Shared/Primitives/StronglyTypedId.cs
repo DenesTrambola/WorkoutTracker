@@ -1,3 +1,13 @@
 namespace WorkoutTracker.Domain.Shared.Primitives;
 
-public abstract record StronglyTypedId<TValue>(TValue Value);
+using WorkoutTracker.Domain.Shared.Results;
+
+public abstract record StronglyTypedId<TId>
+{
+    public TId Id { get; protected set; }
+
+    protected StronglyTypedId(TId id)
+    {
+        Id = id;
+    }
+}

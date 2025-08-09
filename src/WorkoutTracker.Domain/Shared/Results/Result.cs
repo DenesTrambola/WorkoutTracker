@@ -57,7 +57,8 @@ public class Result
 
     public static Result<TValue> Ensure<TValue>(
         TValue value,
-        [NotNull] Func<TValue, bool> predicate, Error error)
+        [NotNull] Func<TValue, bool> predicate,
+        Error error)
     {
         return predicate(value) ? Success(value) : Failure<TValue>(error);
     }

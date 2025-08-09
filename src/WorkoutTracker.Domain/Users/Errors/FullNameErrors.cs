@@ -1,27 +1,32 @@
 namespace WorkoutTracker.Domain.Users.Errors;
 
 using WorkoutTracker.Domain.Shared.Errors;
-using WorkoutTracker.Domain.Shared.Utilities;
 
 public static partial class DomainErrors
 {
     public static class FirstName
     {
         public static readonly Error Empty = Shared.Errors.DomainErrors.Empty(
-            DisplayNameHelper.ToSentence(nameof(FirstName)));
+            nameof(FirstName));
 
         public static readonly Error TooLong = Shared.Errors.DomainErrors.TooLong(
-            DisplayNameHelper.ToSentence(nameof(FirstName)),
+            nameof(FirstName),
             ValueObjects.FullName.MaxLength);
     }
 
     public static class LastName
     {
         public static readonly Error Empty = Shared.Errors.DomainErrors.Empty(
-            DisplayNameHelper.ToSentence(nameof(LastName)));
+            nameof(LastName));
 
         public static readonly Error TooLong = Shared.Errors.DomainErrors.TooLong(
-            DisplayNameHelper.ToSentence(nameof(LastName)),
+            nameof(LastName),
             ValueObjects.FullName.MaxLength);
+    }
+
+    public static class FullName
+    {
+        public static readonly Error Null = Shared.Errors.DomainErrors.Null(
+            nameof(FullName));
     }
 }

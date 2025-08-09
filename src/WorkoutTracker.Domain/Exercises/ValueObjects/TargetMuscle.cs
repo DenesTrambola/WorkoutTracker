@@ -12,25 +12,41 @@ public class TargetMuscle : ValueObject
     public string Muscle { get; private set; }
 
     private TargetMuscle(string muscle)
-        => Muscle = muscle;
+    {
+        Muscle = muscle;
+    }
 
     public static Result<TargetMuscle> Create(string muscle)
-        => Result.Combine(
-            EmptyCheck(muscle),
-            LengthCheck(muscle)
-        ).Map(m => new TargetMuscle(m));
+    {
+        return Result.Combine(
+            EnsureNotEmpty(muscle),
+            EnsureNotTooLong(muscle))
+            .Map(m => new TargetMuscle(m));
+    }
 
-    private static Result<string> EmptyCheck(string muscle)
-        => Result.Ensure(
+    private static Result<string> EnsureNotEmpty(string muscle)
+    {
+        return Result.Ensure(
             muscle,
             muscle => !string.IsNullOrWhiteSpace(muscle),
             DomainErrors.TargetMuscle.Empty);
+    }
 
-    private static Result<string> LengthCheck(string muscle)
-        => Result.Ensure(
+    private static Result<string> EnsureNotTooLong(string muscle)
+    {
+        return Result.Ensure(
             muscle,
             muscle => muscle.Length <= MaxLength,
             DomainErrors.TargetMuscle.TooLong);
+    }
+
+    public static Result<TargetMuscle> EnsureNotNull(TargetMuscle targetMuscle)
+    {
+        return Result.Ensure(
+            targetMuscle,
+            tm => tm is not null,
+            DomainErrors.TargetMuscle.Null);
+    }
 
     public override IEnumerable<object> GetAtomicValues()
     {

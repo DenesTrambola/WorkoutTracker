@@ -10,35 +10,53 @@ public class Email : ValueObject
 {
     public const short MaxLength = 320;
 
-    public string Address { get; }
+    public string Address { get; private set; }
 
     private Email(string address)
-        => Address = address;
+    {
+        Address = address;
+    }
 
     public static Result<Email> Create(string address)
-        => Result.Combine(
-            EmptyCheck(address),
-            LengthCheck(address),
-            FormatCheck(address))
+    {
+        return Result.Combine(
+            EnsureNotEmpty(address),
+            EnsureNotTooLong(address),
+            EnsureFormatIsValid(address))
         .Map(a => new Email(a));
+    }
 
-    private static Result<string> EmptyCheck(string address)
-        => Result.Ensure(
+    private static Result<string> EnsureNotEmpty(string address)
+    {
+        return Result.Ensure(
             address,
             address => !string.IsNullOrWhiteSpace(address),
             DomainErrors.Email.Empty);
+    }
 
-    private static Result<string> LengthCheck(string address)
-        => Result.Ensure(
+    private static Result<string> EnsureNotTooLong(string address)
+    {
+        return Result.Ensure(
             address,
             address => MaxLength > address.Length,
             DomainErrors.Email.TooLong);
+    }
 
-    private static Result<string> FormatCheck(string address)
-        => Result.Ensure(
+    private static Result<string> EnsureFormatIsValid(string address)
+    {
+        return Result.Ensure(
             address,
             address => Regex.IsMatch(address, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"),
             DomainErrors.Email.InvalidFormat);
+    }
+
+    public static Result<Email> EnsureNotNull(Email email)
+    {
+        return Result.Ensure(
+            email,
+            email => email is not null,
+            DomainErrors.Email.Null);
+    }
 
     public override IEnumerable<object> GetAtomicValues()
     {

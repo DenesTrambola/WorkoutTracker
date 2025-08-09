@@ -9,22 +9,36 @@ public class Comment : ValueObject
 {
     public const short MaxLength = 500;
 
-    public string Text { get; private set; }
+    public string? Text { get; private set; }
 
-    private Comment(string text)
-        => Text = text;
+    private Comment(string? text)
+    {
+        Text = text;
+    }
 
-    public static Result<Comment?> Create(string? text)
-        => LengthCheck(text)
-        .Map(t => t is null ? null : new Comment(t));
+    public static Result<Comment> Create(string? text)
+    {
+        return EnsureNotTooLong(text)
+            .Map(t => new Comment(t));
+    }
 
-    private static Result<string?> LengthCheck(string? text)
-        => Result.Ensure(
+    private static Result<string?> EnsureNotTooLong(string? text)
+    {
+        return Result.Ensure(
             text,
             text => MaxLength > text?.Length,
             DomainErrors.Comment.TooLong);
+    }
 
-    public override IEnumerable<object> GetAtomicValues()
+    public static Result<Comment> EnsureNotNull(Comment comment)
+    {
+        return Result.Ensure(
+            comment,
+            c => c is not null,
+            DomainErrors.Comment.Null);
+    }
+
+    public override IEnumerable<object?> GetAtomicValues()
     {
         yield return Text;
     }

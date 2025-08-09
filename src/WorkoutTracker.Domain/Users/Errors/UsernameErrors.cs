@@ -6,6 +6,9 @@ public static partial class DomainErrors
 {
     public static class Username
     {
+        public static readonly Error Null = Shared.Errors.DomainErrors.Null(
+            nameof(Username));
+
         public static readonly Error Empty = Shared.Errors.DomainErrors.Empty(
             nameof(Username));
 

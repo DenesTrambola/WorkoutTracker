@@ -19,13 +19,16 @@ public class FullName : ValueObject
     }
 
     public static Result<FullName> Create(string firstName, string lastName)
-        => Result.Zip(
-            FullNameEmptyCheck(firstName, lastName),
-            FullNameLengthCheck(firstName, lastName),
+    {
+        return Result.Zip(
+            EnsureNotEmpty(firstName, lastName),
+            EnsureNotTooLong(firstName, lastName),
             (first, last) => new FullName(first, last));
+    }
 
-    private static Result<string> FullNameEmptyCheck(string firstName, string lastName)
-        => Result.Combine(
+    private static Result<string> EnsureNotEmpty(string firstName, string lastName)
+    {
+        return Result.Combine(
             Result.Ensure(
                 firstName,
                 firstName => !string.IsNullOrWhiteSpace(firstName),
@@ -34,12 +37,23 @@ public class FullName : ValueObject
                 lastName,
                 lastName => !string.IsNullOrWhiteSpace(lastName),
                 DomainErrors.LastName.Empty));
+    }
 
-    private static Result<string> FullNameLengthCheck(string firstName, string lastName)
-        => Result.Ensure(
+    private static Result<string> EnsureNotTooLong(string firstName, string lastName)
+    {
+        return Result.Ensure(
             firstName,
             firstName => firstName.Length <= MaxLength,
             DomainErrors.FirstName.TooLong);
+    }
+
+    public static Result<FullName> EnsureNotNull(FullName fullName)
+    {
+        return Result.Ensure(
+            fullName,
+            fn => fn is not null,
+            DomainErrors.FullName.Null);
+    }
 
     public override IEnumerable<object> GetAtomicValues()
     {

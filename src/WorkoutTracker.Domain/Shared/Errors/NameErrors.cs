@@ -9,5 +9,8 @@ public static partial class DomainErrors
         public static readonly Error TooLong = TooLong(
             nameof(Name),
             ValueObjects.Name.MaxLength);
+
+        public static readonly Error Null = DomainErrors.Null(
+            nameof(Name));
     }
 }
