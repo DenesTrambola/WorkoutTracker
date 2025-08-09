@@ -1,4 +1,4 @@
-namespace WorkoutTracker.Domain.Measurement;
+namespace WorkoutTracker.Domain.Measurements;
 
 using WorkoutTracker.Domain.Measurements.Enums;
 using WorkoutTracker.Domain.Measurements.Errors;

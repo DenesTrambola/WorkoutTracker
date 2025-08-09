@@ -1,6 +1,6 @@
-﻿namespace WorkoutTracker.Architecture.Tests;
+namespace WorkoutTracker.Architecture.Tests;
 
-public static class RootNamespaces
+internal static class RootNamespaces
 {
     public const string ProjectName = "WorkoutTracker";
 
