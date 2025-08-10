@@ -31,7 +31,7 @@ public class PasswordHash : ValueObject
             DomainErrors.PasswordHash.Null);
     }
 
-    public override IEnumerable<object> GetAtomicValues()
+    protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;
     }

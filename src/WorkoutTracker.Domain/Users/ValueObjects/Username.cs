@@ -54,7 +54,7 @@ public class Username : ValueObject
             DomainErrors.Username.Null);
     }
 
-    public override IEnumerable<object> GetAtomicValues()
+    protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Login;
     }

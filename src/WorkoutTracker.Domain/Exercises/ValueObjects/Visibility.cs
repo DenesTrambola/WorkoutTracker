@@ -37,7 +37,7 @@ public class Visibility : ValueObject
             DomainErrors.Visibility.Null);
     }
 
-    public override IEnumerable<object> GetAtomicValues()
+    protected override IEnumerable<object> GetAtomicValues()
     {
         yield return IsPublic;
     }

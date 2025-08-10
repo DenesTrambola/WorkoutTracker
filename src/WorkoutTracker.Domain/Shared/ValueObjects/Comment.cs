@@ -38,7 +38,7 @@ public class Comment : ValueObject
             DomainErrors.Comment.Null);
     }
 
-    public override IEnumerable<object?> GetAtomicValues()
+    protected override IEnumerable<object?> GetAtomicValues()
     {
         yield return Text;
     }

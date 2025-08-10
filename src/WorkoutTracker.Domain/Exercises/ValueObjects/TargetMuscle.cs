@@ -48,7 +48,7 @@ public class TargetMuscle : ValueObject
             DomainErrors.TargetMuscle.Null);
     }
 
-    public override IEnumerable<object> GetAtomicValues()
+    protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Muscle;
     }

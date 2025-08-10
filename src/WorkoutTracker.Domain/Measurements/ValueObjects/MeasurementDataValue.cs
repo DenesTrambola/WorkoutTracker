@@ -31,7 +31,7 @@ public class MeasurementDataValue : ValueObject
             DomainErrors.MeasurementDataValue.Null);
     }
 
-    public override IEnumerable<object> GetAtomicValues()
+    protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;
     }

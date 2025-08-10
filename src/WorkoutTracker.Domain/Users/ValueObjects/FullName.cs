@@ -55,7 +55,7 @@ public class FullName : ValueObject
             DomainErrors.FullName.Null);
     }
 
-    public override IEnumerable<object> GetAtomicValues()
+    protected override IEnumerable<object> GetAtomicValues()
     {
         yield return FirstName;
         yield return LastName;

@@ -36,7 +36,7 @@ public class ExercisePosition : ValueObject
             DomainErrors.ExercisePosition.Null);
     }
 
-    public override IEnumerable<object> GetAtomicValues()
+    protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Position;
     }

@@ -58,7 +58,7 @@ public class Email : ValueObject
             DomainErrors.Email.Null);
     }
 
-    public override IEnumerable<object> GetAtomicValues()
+    protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Address;
     }
