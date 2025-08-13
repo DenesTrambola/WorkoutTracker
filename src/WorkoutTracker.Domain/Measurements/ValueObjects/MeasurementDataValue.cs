@@ -16,19 +16,23 @@ public class MeasurementDataValue : ValueObject
 
     public static Result<MeasurementDataValue> Create(float value)
     {
-        return Result.Ensure(
-            value,
-            v => v >= 1,
-            DomainErrors.MeasurementDataValue.Null)
+        return EnsureIsValid(value)
             .Map(v => new MeasurementDataValue(v));
     }
 
-    public static Result<MeasurementDataValue> EnsureNotNull(MeasurementDataValue value)
+    private static Result<float> EnsureIsValid(float value)
     {
         return Result.Ensure(
             value,
-            v => v is not null,
-            DomainErrors.MeasurementDataValue.Null);
+            v => v > 0,
+            DomainErrors.MeasurementDataValue.Invalid);
+    }
+
+    public static Result<MeasurementDataValue> EnsureNotNull(MeasurementDataValue? value)
+    {
+        return value is not null
+            ? Result.Success(value)
+            : Result.Failure<MeasurementDataValue>(DomainErrors.MeasurementDataValue.Null);
     }
 
     protected override IEnumerable<object> GetAtomicValues()

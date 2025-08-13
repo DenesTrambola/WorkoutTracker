@@ -6,7 +6,7 @@ public static partial class DomainErrors
 {
     public static class Gender
     {
-        public static readonly Error InvalidValue = Shared.Errors.DomainErrors.InvalidValue(
+        public static readonly Error Invalid = Shared.Errors.DomainErrors.InvalidValue(
             nameof(Gender));
     }
 }

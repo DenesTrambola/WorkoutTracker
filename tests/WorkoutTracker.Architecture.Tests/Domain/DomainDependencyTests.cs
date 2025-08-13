@@ -1,11 +1,11 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using NetArchTest.Rules;
 using System.Reflection;
 using WorkoutTracker.Domain;
 
 namespace WorkoutTracker.Architecture.Tests.Domain;
 
-public class DomainDependencyTests
+public sealed class DomainDependencyTests
 {
     private readonly Assembly _domainAssembly = DomainAssemblyReference.Assembly;
 

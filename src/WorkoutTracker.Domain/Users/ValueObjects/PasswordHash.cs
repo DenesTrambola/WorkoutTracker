@@ -16,19 +16,23 @@ public class PasswordHash : ValueObject
 
     public static Result<PasswordHash> Create(string passwordHash)
     {
-        return Result.Ensure(
-            passwordHash,
-            ph => !string.IsNullOrWhiteSpace(ph),
-            DomainErrors.PasswordHash.Empty)
-        .Map(ph => new PasswordHash(ph));
+        return EnsureNotEmpty(passwordHash)
+            .Map(ph => new PasswordHash(ph));
     }
 
-    public static Result<PasswordHash> EnsureNotNull(PasswordHash passwordHash)
+    private static Result<string> EnsureNotEmpty(string passwordHash)
     {
         return Result.Ensure(
             passwordHash,
-            ph => ph is not null,
-            DomainErrors.PasswordHash.Null);
+            ph => !string.IsNullOrWhiteSpace(ph),
+            DomainErrors.PasswordHash.Empty);
+    }
+
+    public static Result<PasswordHash> EnsureNotNull(PasswordHash? passwordHash)
+    {
+        return passwordHash is not null
+            ? Result.Success(passwordHash)
+            : Result.Failure<PasswordHash>(DomainErrors.PasswordHash.Null);
     }
 
     protected override IEnumerable<object> GetAtomicValues()

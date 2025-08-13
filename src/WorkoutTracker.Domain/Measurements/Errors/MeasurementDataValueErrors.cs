@@ -8,5 +8,9 @@ public static partial class DomainErrors
     {
         public static readonly Error Null = Shared.Errors.DomainErrors.Null(
             nameof(MeasurementDataValue));
+
+        public static Error Invalid => new(
+            $"{nameof(MeasurementDataValue)}.InvalidPosition",
+            "Data value must be greater than or equal to 1.");
     }
 }

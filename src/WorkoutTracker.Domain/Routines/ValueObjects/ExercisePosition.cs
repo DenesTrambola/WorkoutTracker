@@ -20,20 +20,19 @@ public class ExercisePosition : ValueObject
             .Map(p => new ExercisePosition(p));
     }
 
-    public static Result<byte> EnsureValueIsValid(byte position)
+    private static Result<byte> EnsureValueIsValid(byte position)
     {
         return Result.Ensure(
             position,
-            p => p >= 1,
-            DomainErrors.RoutineExercise.InvalidPosition);
+            p => p > 0,
+            DomainErrors.ExercisePosition.Invalid);
     }
 
-    public static Result<ExercisePosition> EnsureNotNull(ExercisePosition position)
+    public static Result<ExercisePosition> EnsureNotNull(ExercisePosition? position)
     {
-        return Result.Ensure(
-            position,
-            p => p is not null,
-            DomainErrors.ExercisePosition.Null);
+        return position is not null
+            ? Result.Success(position)
+            : Result.Failure<ExercisePosition>(DomainErrors.ExercisePosition.Null);
     }
 
     protected override IEnumerable<object> GetAtomicValues()

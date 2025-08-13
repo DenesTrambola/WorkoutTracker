@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using WorkoutTracker.Domain.Shared.Errors;
 using WorkoutTracker.Domain.Shared.Primitives;
 using WorkoutTracker.Domain.Shared.Results;
+using static WorkoutTracker.Domain.Shared.Errors.DomainErrors;
 
 public class Name : ValueObject
 {
@@ -36,16 +37,15 @@ public class Name : ValueObject
     {
         return Result.Ensure(
             value,
-            value => MaxLength > value.Length,
+            value => MaxLength >= value.Length,
             DomainErrors.Name.TooLong);
     }
 
-    public static Result<Name> EnsureNotNull(Name name)
+    public static Result<Name> EnsureNotNull(Name? name)
     {
-        return Result.Ensure(
-            name,
-            n => n is not null,
-            DomainErrors.Name.Null);
+        return name is not null
+            ? Result.Success(name)
+            : Result.Failure<Name>(DomainErrors.Name.Null);
     }
 
     protected override IEnumerable<object> GetAtomicValues()

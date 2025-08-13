@@ -38,7 +38,7 @@ public class Email : ValueObject
     {
         return Result.Ensure(
             address,
-            address => MaxLength > address.Length,
+            address => MaxLength >= address.Length,
             DomainErrors.Email.TooLong);
     }
 
@@ -50,12 +50,11 @@ public class Email : ValueObject
             DomainErrors.Email.InvalidFormat);
     }
 
-    public static Result<Email> EnsureNotNull(Email email)
+    public static Result<Email> EnsureNotNull(Email? email)
     {
-        return Result.Ensure(
-            email,
-            email => email is not null,
-            DomainErrors.Email.Null);
+        return email is not null
+            ? Result.Success(email)
+            : Result.Failure<Email>(DomainErrors.Email.Null);
     }
 
     protected override IEnumerable<object> GetAtomicValues()

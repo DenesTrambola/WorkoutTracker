@@ -20,9 +20,5 @@ public static partial class DomainErrors
         public static readonly Error InvalidRestTimeBetweenSets = new Error(
             $"{nameof(RoutineExercise)}.InvalidRestTimeBetweenSets",
             "The rest time between sets must be greater than zero.");
-
-        public static Error InvalidPosition => new(
-            $"{nameof(RoutineExercise)}.InvalidPosition",
-            "Position must be greater than or equal to 1.");
     }
 }

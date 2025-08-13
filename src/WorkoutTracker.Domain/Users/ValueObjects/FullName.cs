@@ -23,7 +23,7 @@ public class FullName : ValueObject
         return Result.Zip(
             EnsureNotEmpty(firstName, lastName),
             EnsureNotTooLong(firstName, lastName),
-            (first, last) => new FullName(first, last));
+            (fn, ln) => new FullName(fn, ln));
     }
 
     private static Result<string> EnsureNotEmpty(string firstName, string lastName)
@@ -31,28 +31,32 @@ public class FullName : ValueObject
         return Result.Combine(
             Result.Ensure(
                 firstName,
-                firstName => !string.IsNullOrWhiteSpace(firstName),
+                fn => !string.IsNullOrWhiteSpace(fn),
                 DomainErrors.FirstName.Empty),
             Result.Ensure(
                 lastName,
-                lastName => !string.IsNullOrWhiteSpace(lastName),
+                fn => !string.IsNullOrWhiteSpace(fn),
                 DomainErrors.LastName.Empty));
     }
 
     private static Result<string> EnsureNotTooLong(string firstName, string lastName)
     {
-        return Result.Ensure(
-            firstName,
-            firstName => firstName.Length <= MaxLength,
-            DomainErrors.FirstName.TooLong);
+        return Result.Combine(
+            Result.Ensure(
+                firstName,
+                fn => fn.Length <= MaxLength,
+                DomainErrors.FirstName.TooLong),
+            Result.Ensure(
+                lastName,
+                ln => ln.Length <= MaxLength,
+                DomainErrors.LastName.TooLong));
     }
 
-    public static Result<FullName> EnsureNotNull(FullName fullName)
+    public static Result<FullName> EnsureNotNull(FullName? fullName)
     {
-        return Result.Ensure(
-            fullName,
-            fn => fn is not null,
-            DomainErrors.FullName.Null);
+        return fullName is not null
+            ? Result.Success(fullName)
+            : Result.Failure<FullName>(DomainErrors.FullName.Null);
     }
 
     protected override IEnumerable<object> GetAtomicValues()

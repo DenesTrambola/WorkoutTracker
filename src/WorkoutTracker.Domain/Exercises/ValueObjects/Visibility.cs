@@ -19,22 +19,21 @@ public class Visibility : ValueObject
         return new Visibility(isPublic);
     }
 
-    public static Visibility Public()
+    public static Result<Visibility> Public()
     {
         return new Visibility(true);
     }
 
-    public static Visibility Private()
+    public static Result<Visibility> Private()
     {
         return new Visibility(false);
     }
 
-    public static Result<Visibility> EnsureNotNull(Visibility visibility)
+    public static Result<Visibility> EnsureNotNull(Visibility? visibility)
     {
-        return Result.Ensure(
-            visibility,
-            v => v is not null,
-            DomainErrors.Visibility.Null);
+        return visibility is not null
+            ? Result.Success(visibility)
+            : Result.Failure<Visibility>(DomainErrors.Visibility.Null);
     }
 
     protected override IEnumerable<object> GetAtomicValues()

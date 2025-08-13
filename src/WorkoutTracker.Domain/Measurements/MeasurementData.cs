@@ -67,31 +67,34 @@ public class MeasurementData : Entity<MeasurementDataId>
 
     public Result<MeasurementData> UpdateValue(MeasurementDataValue newValue)
     {
-        return Result.Ensure(
-            newValue,
-            v => v is not null,
-            DomainErrors.MeasurementDataValue.Null)
-            .OnSuccess(v => Value = v)
+        return MeasurementDataValue.EnsureNotNull(newValue)
+            .OnSuccess(v =>
+            {
+                if (Value != v)
+                    Value = v;
+            })
             .Map(_ => this);
     }
 
     public Result<MeasurementData> UpdateMeasuredOn(DateTime newMeasuredOn)
     {
-        return Result.Ensure(
-            newMeasuredOn,
-            mo => mo <= DateTime.UtcNow,
-            DomainErrors.MeasurementData.InvalidDate)
-            .OnSuccess(mo => MeasuredOn = mo)
+        return EnsureMeasuredOnIsValid(newMeasuredOn)
+            .OnSuccess(mo =>
+            {
+                if (MeasuredOn != mo)
+                    MeasuredOn = mo;
+            })
             .Map(_ => this);
     }
 
     public Result<MeasurementData> UpdateComment(Comment newComment)
     {
-        return Result.Ensure(
-            newComment,
-            c => c is not null,
-            Shared.Errors.DomainErrors.Comment.Null)
-            .OnSuccess(c => Comment = c)
+        return Comment.EnsureNotNull(newComment)
+            .OnSuccess(c =>
+            {
+                if (Comment != c)
+                    Comment = c;
+            })
             .Map(_ => this);
     }
 }

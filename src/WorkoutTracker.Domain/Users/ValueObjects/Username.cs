@@ -19,14 +19,8 @@ public class Username : ValueObject
     public static Result<Username> Create(string login)
     {
         return Result.Combine(
-            Result.Ensure(
-                login,
-                login => !string.IsNullOrWhiteSpace(login),
-                DomainErrors.Username.Empty),
-            Result.Ensure(
-                login,
-                login => login.Length <= MaxLength,
-                DomainErrors.Username.TooLong))
+            EnsureNotEmpty(login),
+            EnsureNotTooLong(login))
             .Map(l => new Username(l));
     }
 
@@ -46,12 +40,11 @@ public class Username : ValueObject
             DomainErrors.Username.TooLong);
     }
 
-    public static Result<Username> EnsureNotNull(Username username)
+    public static Result<Username> EnsureNotNull(Username? username)
     {
-        return Result.Ensure(
-            username,
-            un => un is not null,
-            DomainErrors.Username.Null);
+        return username is not null
+            ? Result.Success(username)
+            : Result.Failure<Username>(DomainErrors.Username.Null);
     }
 
     protected override IEnumerable<object> GetAtomicValues()

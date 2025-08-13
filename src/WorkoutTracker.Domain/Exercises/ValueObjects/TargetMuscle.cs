@@ -40,12 +40,11 @@ public class TargetMuscle : ValueObject
             DomainErrors.TargetMuscle.TooLong);
     }
 
-    public static Result<TargetMuscle> EnsureNotNull(TargetMuscle targetMuscle)
+    public static Result<TargetMuscle> EnsureNotNull(TargetMuscle? targetMuscle)
     {
-        return Result.Ensure(
-            targetMuscle,
-            tm => tm is not null,
-            DomainErrors.TargetMuscle.Null);
+        return targetMuscle is not null
+            ? Result.Success(targetMuscle)
+            : Result.Failure<TargetMuscle>(DomainErrors.TargetMuscle.Null);
     }
 
     protected override IEnumerable<object> GetAtomicValues()

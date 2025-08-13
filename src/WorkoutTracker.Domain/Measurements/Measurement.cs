@@ -65,37 +65,40 @@ public class Measurement : AggregateRoot<MeasurementId>
     {
         return Result.Ensure(
             unit,
-            u => Enum.IsDefined(u),
-            DomainErrors.MeasurementUnit.InvalidValue);
+            u => Enum.IsDefined<MeasurementUnit>(u),
+            DomainErrors.MeasurementUnit.Invalid);
     }
 
     public Result<Measurement> UpdateName(Name newName)
     {
-        return Result.Ensure(
-            newName,
-            n => n is not null,
-            Shared.Errors.DomainErrors.Name.Null)
-            .OnSuccess(n => Name = n)
+        return Name.EnsureNotNull(newName)
+            .OnSuccess(n =>
+            {
+                if (Name != n)
+                    Name = n;
+            })
             .Map(_ => this);
     }
 
     public Result<Measurement> UpdateDescription(Description newDescription)
     {
-        return Result.Ensure(
-            newDescription,
-            d => d is not null,
-            Shared.Errors.DomainErrors.Description.Null)
-            .OnSuccess(d => Description = d)
+        return Description.EnsureNotNull(newDescription)
+            .OnSuccess(d =>
+            {
+                if (Description != d)
+                    Description = d;
+            })
             .Map(_ => this);
     }
 
     public Result<Measurement> UpdateUnit(MeasurementUnit newUnit)
     {
-        return Result.Ensure(
-            newUnit,
-            u => Enum.IsDefined(u),
-            DomainErrors.MeasurementUnit.InvalidValue)
-            .OnSuccess(u => Unit = u)
+        return EnsureMeasurementUnitIsDefined(newUnit)
+            .OnSuccess(u =>
+            {
+                if (Unit != u)
+                    Unit = u;
+            })
             .Map(_ => this);
     }
 }

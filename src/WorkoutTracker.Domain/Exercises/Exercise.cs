@@ -61,19 +61,34 @@ public class Exercise : AggregateRoot<ExerciseId>
 
     public Result<Exercise> UpdateName(Name newName)
     {
-        Name = newName;
-        return this;
+        return Name.EnsureNotNull(newName)
+            .OnSuccess(n =>
+            {
+                if (Name != n)
+                    Name = n;
+            })
+            .Map(_ => this);
     }
 
     public Result<Exercise> UpdateTargetMuscle(TargetMuscle newTargetMuscle)
     {
-        TargetMuscle = newTargetMuscle;
-        return this;
+        return TargetMuscle.EnsureNotNull(newTargetMuscle)
+            .OnSuccess(tm =>
+            {
+                if (TargetMuscle != tm)
+                    TargetMuscle = tm;
+            })
+            .Map(_ => this);
     }
 
     public Result<Exercise> UpdateVisibility(Visibility newVisibility)
     {
-        Visibility = newVisibility;
-        return this;
+        return Visibility.EnsureNotNull(newVisibility)
+            .OnSuccess(v =>
+            {
+                if (Visibility != v)
+                    Visibility = v;
+            })
+            .Map(_ => this);
     }
 }

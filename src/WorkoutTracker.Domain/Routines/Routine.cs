@@ -57,21 +57,23 @@ public class Routine : AggregateRoot<RoutineId>
 
     public Result<Routine> UpdateName(Name newName)
     {
-        return Result.Ensure(
-            newName,
-            n => n is not null,
-            Shared.Errors.DomainErrors.Name.Null)
-            .OnSuccess(n => Name = n)
+        return Name.EnsureNotNull(newName)
+            .OnSuccess(n =>
+            {
+                if (Name != n)
+                    Name = n;
+            })
             .Map(_ => this);
     }
 
     public Result<Routine> UpdateDescription(Description newDescription)
     {
-        return Result.Ensure(
-            newDescription,
-            d => d is not null,
-            Shared.Errors.DomainErrors.Description.Null)
-            .OnSuccess(d => Description = d)
+        return Description.EnsureNotNull(newDescription)
+            .OnSuccess(d =>
+            {
+                if (Description != d)
+                    Description = d;
+            })
             .Map(_ => this);
     }
 }

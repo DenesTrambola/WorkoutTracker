@@ -97,7 +97,7 @@ public class User : AggregateRoot<UserId>
         return Result.Ensure(
             gender,
             g => Enum.IsDefined(g),
-            DomainErrors.Gender.InvalidValue);
+            DomainErrors.Gender.Invalid);
     }
 
     private static Result<UserRole> EnsureRoleIsDefined(UserRole role)
@@ -105,7 +105,7 @@ public class User : AggregateRoot<UserId>
         return Result.Ensure(
             role,
             r => Enum.IsDefined(r),
-            DomainErrors.UserRole.InvalidValue);
+            DomainErrors.UserRole.Invalid);
     }
 
     private static Result<DateOnly> EnsureBirthDateIsValid(DateOnly birthDate)
@@ -113,76 +113,83 @@ public class User : AggregateRoot<UserId>
         return Result.Ensure(
             birthDate,
             bd => bd <= DateOnly.FromDateTime(DateTime.UtcNow),
-            DomainErrors.BirthDate.InvalidValue);
+            DomainErrors.BirthDate.Invalid);
     }
 
     public Result<User> UpdateUsername(Username newUsername)
     {
-        return Result.Ensure(
-            newUsername,
-            un => un is not null,
-            DomainErrors.Username.Null)
-            .OnSuccess(un => Username = un)
+        return Username.EnsureNotNull(newUsername)
+            .OnSuccess(un =>
+            {
+                if (Username != un)
+                    Username = un;
+            })
             .Map(_ => this);
     }
 
     public Result<User> UpdatePasswordHash(PasswordHash newPasswordHash)
     {
-        return Result.Ensure(
-            newPasswordHash,
-            ph => ph is not null,
-            DomainErrors.PasswordHash.Null)
-            .OnSuccess(ph => PasswordHash = ph)
+        return PasswordHash.EnsureNotNull(newPasswordHash)
+            .OnSuccess(ph =>
+            {
+                if (PasswordHash != ph)
+                    PasswordHash = ph;
+            })
             .Map(_ => this);
     }
 
-    public Result<User> UpdateEmail(Email email)
+    public Result<User> UpdateEmail(Email newEmail)
     {
-        return Result.Ensure(
-            email,
-            em => em is not null,
-            DomainErrors.Email.Null)
-            .OnSuccess(em => Email = em)
+        return Email.EnsureNotNull(newEmail)
+            .OnSuccess(e =>
+            {
+                if (Email != e)
+                    Email = e;
+            })
             .Map(_ => this);
     }
 
     public Result<User> UpdateFullName(FullName newFullName)
     {
-        return Result.Ensure(
-            newFullName,
-            fn => fn is not null,
-            DomainErrors.FullName.Null)
-            .OnSuccess(fn => FullName = fn)
+        return FullName.EnsureNotNull(newFullName)
+            .OnSuccess(fn =>
+            {
+                if (FullName != fn)
+                    FullName = fn;
+            })
             .Map(_ => this);
     }
 
-    public Result<User> UpdateGender(Gender gender)
+    public Result<User> UpdateGender(Gender newGender)
     {
-        return Result.Ensure(
-            gender,
-            g => Enum.IsDefined(g),
-            DomainErrors.Gender.InvalidValue)
-            .OnSuccess(g => Gender = gender)
+        return EnsureGenderIsDefined(newGender)
+            .OnSuccess(g =>
+            {
+                if (Gender != g)
+                    Gender = g;
+            })
             .Map(_ => this);
     }
 
-    public Result<User> UpdateRole(UserRole role)
+    public Result<User> UpdateRole(UserRole newRole)
     {
-        return Result.Ensure(
-            role,
-            r => Enum.IsDefined(r),
-            DomainErrors.UserRole.InvalidValue)
-            .OnSuccess(r => Role = role)
+        return EnsureRoleIsDefined(newRole)
+            .OnSuccess(r =>
+            {
+                if (Role != r)
+                    Role = r;
+            })
             .Map(_ => this);
     }
 
-    public Result<User> UpdateBirthDate(DateOnly birthDate)
+    public Result<User> UpdateBirthDate(DateOnly newBirthDate)
     {
-        return Result.Ensure(
-            birthDate,
-            bd => bd != default,
-            DomainErrors.BirthDate.InvalidValue)
-            .OnSuccess(bd => BirthDate = bd)
+        return EnsureBirthDateIsValid(newBirthDate)
+            .OnSuccess(bd =>
+            {
+                if (BirthDate != bd)
+                    BirthDate = bd;
+            })
             .Map(_ => this);
     }
 }

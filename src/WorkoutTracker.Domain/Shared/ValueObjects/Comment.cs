@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using WorkoutTracker.Domain.Shared.Errors;
 using WorkoutTracker.Domain.Shared.Primitives;
 using WorkoutTracker.Domain.Shared.Results;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class Comment : ValueObject
 {
@@ -26,16 +27,15 @@ public class Comment : ValueObject
     {
         return Result.Ensure(
             text,
-            text => MaxLength > text?.Length,
+            text => text is null || MaxLength >= text.Length,
             DomainErrors.Comment.TooLong);
     }
 
-    public static Result<Comment> EnsureNotNull(Comment comment)
+    public static Result<Comment> EnsureNotNull(Comment? comment)
     {
-        return Result.Ensure(
-            comment,
-            c => c is not null,
-            DomainErrors.Comment.Null);
+        return comment is not null
+            ? Result.Success(comment)
+            : Result.Failure<Comment>(DomainErrors.Comment.Null);
     }
 
     protected override IEnumerable<object?> GetAtomicValues()

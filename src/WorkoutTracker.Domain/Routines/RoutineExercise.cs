@@ -103,51 +103,56 @@ public class RoutineExercise : Entity<RoutineExerciseId>
 
     public Result<RoutineExercise> UpdateSetCount(byte newSetCount)
     {
-        return Result.Ensure(
-            newSetCount,
-            sc => sc > 0,
-            DomainErrors.RoutineExercise.InvalidSetCount)
-            .OnSuccess(sc => SetCount = sc)
+        return EnsureSetCountIsValid(newSetCount)
+            .OnSuccess(sc =>
+            {
+                if (SetCount != sc)
+                    SetCount = sc;
+            })
             .Map(_ => this);
     }
 
     public Result<RoutineExercise> UpdateRepCount(byte newRepCount)
     {
-        return Result.Ensure(
-            newRepCount,
-            rc => rc > 0,
-            DomainErrors.RoutineExercise.InvalidRepCount)
-            .OnSuccess(rc => RepCount = rc)
+        return EnsureRepCountIsValid(newRepCount)
+            .OnSuccess(rc =>
+            {
+                if (RepCount != rc)
+                    RepCount = rc;
+            })
             .Map(_ => this);
     }
 
     public Result<RoutineExercise> UpdateRestTimeBetweenSets(TimeSpan newRestTimeBetweenSets)
     {
-        return Result.Ensure(
-            newRestTimeBetweenSets,
-            stbs => stbs > TimeSpan.Zero,
-            DomainErrors.RoutineExercise.InvalidRestTimeBetweenSets)
-            .OnSuccess(stbs => RestTimeBetweenSets = stbs)
+        return EnsureRestTimeIsValid(newRestTimeBetweenSets)
+            .OnSuccess(rtbs =>
+            {
+                if (RestTimeBetweenSets != rtbs)
+                    RestTimeBetweenSets = rtbs;
+            })
             .Map(_ => this);
     }
 
     public Result<RoutineExercise> UpdateComment(Comment newComment)
     {
-        return Result.Ensure(
-            newComment,
-            c => c is not null,
-            Shared.Errors.DomainErrors.Comment.Null)
-            .OnSuccess(c => Comment = c)
+        return Comment.EnsureNotNull(newComment)
+            .OnSuccess(c =>
+            {
+                if (Comment != c)
+                    Comment = c;
+            })
             .Map(_ => this);
     }
 
     public Result<RoutineExercise> UpdatePosition(ExercisePosition newPosition)
     {
-        return Result.Ensure(
-            newPosition,
-            p => p is not null,
-            DomainErrors.ExercisePosition.Null)
-            .OnSuccess(p => Position = p)
+        return ExercisePosition.EnsureNotNull(newPosition)
+            .OnSuccess(p =>
+            {
+                if (Position != p)
+                    Position = p;
+            })
             .Map(_ => this);
     }
 }
