@@ -107,10 +107,7 @@ public class Workout : Entity<WorkoutId>
 
     public Result<Workout> UpdateComment(Comment comment)
     {
-        return Result.Ensure(
-            comment,
-            c => c is not null,
-            Shared.Errors.DomainErrors.Comment.Null)
+        return Comment.EnsureNotNull(comment)
             .OnSuccess(c => Comment = c)
             .Map(_ => this);
     }

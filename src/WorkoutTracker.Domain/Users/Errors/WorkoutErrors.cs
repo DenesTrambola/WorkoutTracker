@@ -19,5 +19,9 @@ public static partial class DomainErrors
         public static readonly Error InvalidRestTime = new Error(
             $"{nameof(Workout)}.InvalidRestTime",
             "The rest time between exercises must be a positive duration.");
+
+        public static readonly Error CannotRemove = Shared.Errors.DomainErrors.CannotRemove(
+            nameof(Workout),
+            nameof(User));
     }
 }

@@ -41,6 +41,16 @@ public static class ResultExtensions
         return Result.Failure<TValue>(result.Errors);
     }
 
+    public static Result<TValue> OnSuccess<TValue>(
+        [NotNull] this Result result,
+        [NotNull] Func<Result<TValue>> callback)
+    {
+        if (result.IsSuccess)
+            return callback();
+
+        return Result.Failure<TValue>(result.Errors);
+    }
+
     public static Result<TValue> OnFailure<TValue>(
         [NotNull] this Result<TValue> result,
         [NotNull] Action<Error[]> action)

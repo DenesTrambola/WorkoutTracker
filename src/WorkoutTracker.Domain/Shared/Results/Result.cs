@@ -88,6 +88,20 @@ public class Result
     public static Result<TOut> Zip<TIn1, TIn2, TOut>(
         [NotNull] Result<TIn1> first,
         [NotNull] Result<TIn2> second,
+        [NotNull] Func<TIn1, TIn2, Result<TOut>> map)
+    {
+        if (first.IsFailure || second.IsFailure)
+        {
+            var allErrors = first.Errors.Concat(second.Errors).Distinct().ToArray();
+            return Result.Failure<TOut>(allErrors);
+        }
+
+        return map(first.ValueOrDefault(), second.ValueOrDefault());
+    }
+
+    public static Result<TOut> Zip<TIn1, TIn2, TOut>(
+        [NotNull] Result<TIn1> first,
+        [NotNull] Result<TIn2> second,
         [NotNull] Func<TIn1, TIn2, TOut> map)
     {
         if (first.IsFailure || second.IsFailure)

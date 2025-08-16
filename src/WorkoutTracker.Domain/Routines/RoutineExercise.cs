@@ -97,7 +97,7 @@ public class RoutineExercise : Entity<RoutineExerciseId>
     {
         return Result.Ensure(
             restTimeBetweenSets,
-            stbs => stbs > TimeSpan.Zero,
+            stbs => stbs >= TimeSpan.Zero,
             DomainErrors.RoutineExercise.InvalidRestTimeBetweenSets);
     }
 

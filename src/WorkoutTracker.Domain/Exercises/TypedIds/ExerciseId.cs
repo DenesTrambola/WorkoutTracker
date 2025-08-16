@@ -11,7 +11,7 @@ public record ExerciseId : StronglyTypedId<Guid>
     {
     }
 
-    public static ExerciseId New()
+    public static Result<ExerciseId> New()
     {
         return new ExerciseId(Guid.NewGuid());
     }

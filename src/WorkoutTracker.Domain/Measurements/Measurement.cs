@@ -3,6 +3,7 @@ namespace WorkoutTracker.Domain.Measurements;
 using WorkoutTracker.Domain.Measurements.Enums;
 using WorkoutTracker.Domain.Measurements.Errors;
 using WorkoutTracker.Domain.Measurements.TypedIds;
+using WorkoutTracker.Domain.Measurements.ValueObjects;
 using WorkoutTracker.Domain.Shared.Primitives;
 using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Domain.Shared.ValueObjects;
@@ -99,6 +100,27 @@ public class Measurement : AggregateRoot<MeasurementId>
                 if (Unit != u)
                     Unit = u;
             })
+            .Map(_ => this);
+    }
+
+    public Result<MeasurementData> AddData(
+        MeasurementDataValue value,
+        DateTime measuredOn,
+        Comment comment)
+    {
+        return Result.Combine(
+            MeasurementDataValue.EnsureNotNull(value),
+            Comment.EnsureNotNull(comment))
+            .OnSuccess(() => MeasurementData.Create(value, measuredOn, comment, Id))
+            .OnSuccess(d => _data.Add(d));
+    }
+
+    public Result<Measurement> RemoveData(MeasurementDataId dataId)
+    {
+        return MeasurementDataId.EnsureNotNull(dataId)
+            .Map(dId => _data.Find(data => data.Id == dId))
+            .Ensure(d => d is not null, DomainErrors.MeasurementData.NotFound)
+            .Ensure(d => _data.Remove(d!), DomainErrors.MeasurementData.CannotRemove)
             .Map(_ => this);
     }
 }

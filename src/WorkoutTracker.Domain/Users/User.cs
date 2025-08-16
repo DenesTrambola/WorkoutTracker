@@ -5,6 +5,7 @@ using WorkoutTracker.Domain.Measurements.TypedIds;
 using WorkoutTracker.Domain.Routines.TypedIds;
 using WorkoutTracker.Domain.Shared.Primitives;
 using WorkoutTracker.Domain.Shared.Results;
+using WorkoutTracker.Domain.Shared.ValueObjects;
 using WorkoutTracker.Domain.Users.Enums;
 using WorkoutTracker.Domain.Users.Errors;
 using WorkoutTracker.Domain.Users.TypedIds;
@@ -190,6 +191,36 @@ public class User : AggregateRoot<UserId>
                 if (BirthDate != bd)
                     BirthDate = bd;
             })
+            .Map(_ => this);
+    }
+
+    public Result<Workout> AddWorkout(
+        DateTime startTime,
+        DateTime endTime,
+        TimeSpan restTimeBetweenExercises,
+        Comment comment,
+        RoutineId routineId)
+    {
+        return Result.Combine(
+            Comment.EnsureNotNull(comment),
+            RoutineId.EnsureNotNull(routineId))
+            .OnSuccess(() => Workout.Create(
+                startTime,
+                endTime,
+                restTimeBetweenExercises,
+                comment,
+                Id,
+                routineId))
+            .OnSuccess(wo => _workouts.Add(wo));
+    }
+
+    public Result<User> RemoveWorkout(
+        WorkoutId workoutId)
+    {
+        return WorkoutId.EnsureNotNull(workoutId)
+            .Map(woId => _workouts.Find(wo => wo.Id == woId))
+            .Ensure(wo => wo is not null, DomainErrors.Workout.NotFound)
+            .Ensure(wo => _workouts.Remove(wo!), DomainErrors.Workout.CannotRemove)
             .Map(_ => this);
     }
 }

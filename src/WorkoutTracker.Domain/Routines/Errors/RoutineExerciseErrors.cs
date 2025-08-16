@@ -20,5 +20,12 @@ public static partial class DomainErrors
         public static readonly Error InvalidRestTimeBetweenSets = new Error(
             $"{nameof(RoutineExercise)}.InvalidRestTimeBetweenSets",
             "The rest time between sets must be greater than zero.");
+
+        public static readonly Error CannotRemove = Shared.Errors.DomainErrors.CannotRemove(
+            nameof(RoutineExercise),
+            nameof(Routine));
+
+        public static readonly Error NotFound = Shared.Errors.DomainErrors.NotFound(
+            nameof(RoutineExercise));
     }
 }

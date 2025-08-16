@@ -40,4 +40,9 @@ public static partial class DomainErrors
         => new Error(
             $"{name}.NotFound",
             $"{name} was not found.");
+
+    internal static Error CannotRemove(string name, string from)
+        => new Error(
+            $"{name}.CannotRemove",
+            $"Cannot remove {name} from {from}");
 }

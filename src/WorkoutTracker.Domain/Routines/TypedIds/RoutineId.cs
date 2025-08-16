@@ -11,7 +11,7 @@ public record RoutineId : StronglyTypedId<Guid>
     {
     }
 
-    public static RoutineId New()
+    public static Result<RoutineId> New()
     {
         return new RoutineId(Guid.NewGuid());
     }

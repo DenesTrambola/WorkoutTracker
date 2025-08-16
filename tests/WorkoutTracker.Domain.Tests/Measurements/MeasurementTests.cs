@@ -4,6 +4,8 @@ using FluentAssertions;
 using WorkoutTracker.Domain.Measurements;
 using WorkoutTracker.Domain.Measurements.Enums;
 using WorkoutTracker.Domain.Measurements.Errors;
+using WorkoutTracker.Domain.Measurements.TypedIds;
+using WorkoutTracker.Domain.Measurements.ValueObjects;
 using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Domain.Shared.ValueObjects;
 using WorkoutTracker.Domain.Users.TypedIds;
@@ -234,6 +236,176 @@ public class MeasurementTests
         measurementResult.IsFailure.Should().BeTrue();
         measurementResult.ValueOrDefault().Should().BeNull();
         measurementResult.Errors.Should().Contain(DomainErrors.MeasurementUnit.Invalid);
+    }
+
+    [Fact]
+    public void AddData_Should_ReturnSuccess_When_ValuesAreValid()
+    {
+        // Arrange
+        Measurement measurement = Measurement.Create(
+            _validName,
+            _validDescription,
+            _validUnit,
+            _validUserId)
+            .ValueOrDefault();
+        MeasurementDataValue dataValue = MeasurementDataValue.Create(1).ValueOrDefault();
+        DateTime measuredOn = DateTime.UtcNow;
+        Comment comment = Comment.Create(null).ValueOrDefault();
+
+        // Act
+        Result<MeasurementData> dataResult = measurement.AddData(dataValue, measuredOn, comment);
+
+        // Assert
+        dataResult.IsSuccess.Should().BeTrue();
+        dataResult.ValueOrDefault().Should().NotBeNull();
+        dataResult.Errors.Should().Contain(Domain.Shared.Errors.DomainErrors.None);
+        measurement.Data.Should().Contain(dataResult.ValueOrDefault());
+    }
+
+    [Fact]
+    public void AddData_Should_ReturnFailure_When_DataValueIsNull()
+    {
+        // Arrange
+        Measurement measurement = Measurement.Create(
+            _validName,
+            _validDescription,
+            _validUnit,
+            _validUserId)
+            .ValueOrDefault();
+        MeasurementDataValue? dataValue = null;
+        DateTime measuredOn = DateTime.UtcNow;
+        Comment comment = Comment.Create(null).ValueOrDefault();
+
+        // Act
+        Result<MeasurementData> dataResult = measurement.AddData(dataValue!, measuredOn, comment);
+
+        // Assert
+        dataResult.IsFailure.Should().BeTrue();
+        dataResult.ValueOrDefault().Should().BeNull();
+        dataResult.Errors.Should().Contain(DomainErrors.MeasurementDataValue.Null);
+        measurement.Data.Should().NotContain(dataResult.ValueOrDefault());
+    }
+
+    [Fact]
+    public void AddData_Should_ReturnFailure_When_MeasuredOnIsInvalid()
+    {
+        // Arrange
+        Measurement measurement = Measurement.Create(
+            _validName,
+            _validDescription,
+            _validUnit,
+            _validUserId)
+            .ValueOrDefault();
+        MeasurementDataValue dataValue = MeasurementDataValue.Create(1).ValueOrDefault();
+        DateTime measuredOn = DateTime.UtcNow.AddDays(1);
+        Comment comment = Comment.Create(null).ValueOrDefault();
+
+        // Act
+        Result<MeasurementData> dataResult = measurement.AddData(dataValue, measuredOn, comment);
+
+        // Assert
+        dataResult.IsFailure.Should().BeTrue();
+        dataResult.ValueOrDefault().Should().BeNull();
+        dataResult.Errors.Should().Contain(DomainErrors.MeasurementData.InvalidDate);
+        measurement.Data.Should().NotContain(dataResult.ValueOrDefault());
+    }
+
+    [Fact]
+    public void AddData_Should_ReturnFailure_When_CommentIsNull()
+    {
+        // Arrange
+        Measurement measurement = Measurement.Create(
+            _validName,
+            _validDescription,
+            _validUnit,
+            _validUserId)
+            .ValueOrDefault();
+        MeasurementDataValue dataValue = MeasurementDataValue.Create(1).ValueOrDefault();
+        DateTime measuredOn = DateTime.UtcNow;
+        Comment? comment = null;
+
+        // Act
+        Result<MeasurementData> dataResult = measurement.AddData(dataValue, measuredOn, comment!);
+
+        // Assert
+        dataResult.IsFailure.Should().BeTrue();
+        dataResult.ValueOrDefault().Should().BeNull();
+        dataResult.Errors.Should().Contain(Domain.Shared.Errors.DomainErrors.Comment.Null);
+        measurement.Data.Should().NotContain(dataResult.ValueOrDefault());
+    }
+
+    [Fact]
+    public void RemoveData_Should_ReturnSuccess_When_ValuesAreValid()
+    {
+        // Arrange
+        Measurement measurement = Measurement.Create(
+            _validName,
+            _validDescription,
+            _validUnit,
+            _validUserId)
+        .ValueOrDefault();
+        MeasurementData data = measurement.AddData(
+            MeasurementDataValue.Create(1).ValueOrDefault(),
+            DateTime.UtcNow,
+            Comment.Create(null).ValueOrDefault())
+            .ValueOrDefault();
+
+        // Act
+        Result<Measurement> measurementResult = measurement.RemoveData(data.Id);
+
+        // Assert
+        measurementResult.IsSuccess.Should().BeTrue();
+        measurementResult.ValueOrDefault().Should().NotBeNull();
+        measurementResult.Errors.Should().Contain(Domain.Shared.Errors.DomainErrors.None);
+        measurement.Data.Should().NotContain(data);
+    }
+
+    [Fact]
+    public void RemoveData_Should_ReturnFailure_When_DataIdIsNull()
+    {
+        // Arrange
+        Measurement measurement = Measurement.Create(
+            _validName,
+            _validDescription,
+            _validUnit,
+            _validUserId)
+            .ValueOrDefault();
+        MeasurementDataId? dataId = null;
+
+        // Act
+        Result<Measurement> measurementResult = measurement.RemoveData(dataId!);
+
+        // Assert
+        measurementResult.IsFailure.Should().BeTrue();
+        measurementResult.ValueOrDefault().Should().BeNull();
+        measurementResult.Errors.Should().Contain(DomainErrors.MeasurementDataId.Null);
+    }
+
+    [Fact]
+    public void RemoveData_Should_ReturnFailure_When_DataIsNotFound()
+    {
+        // Arrange
+        Measurement measurement = Measurement.Create(
+            _validName,
+            _validDescription,
+            _validUnit,
+            _validUserId)
+            .ValueOrDefault();
+        MeasurementData data = measurement.AddData(
+            MeasurementDataValue.Create(1).ValueOrDefault(),
+            DateTime.UtcNow,
+            Comment.Create(null).ValueOrDefault())
+            .ValueOrDefault();
+        Result<Measurement> measurementResult = measurement.RemoveData(data.Id);
+
+        // Act
+        measurementResult = measurement.RemoveData(data.Id);
+
+        // Assert
+        measurementResult.IsFailure.Should().BeTrue();
+        measurementResult.ValueOrDefault().Should().BeNull();
+        measurementResult.Errors.Should().Contain(DomainErrors.MeasurementData.NotFound);
+        measurement.Data.Should().NotContain(data);
     }
 
     [Fact]

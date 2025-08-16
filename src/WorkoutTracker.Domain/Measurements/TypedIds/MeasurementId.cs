@@ -11,7 +11,7 @@ public record MeasurementId : StronglyTypedId<Guid>
     {
     }
 
-    public static MeasurementId New()
+    public static Result<MeasurementId> New()
     {
         return new MeasurementId(Guid.NewGuid());
     }
