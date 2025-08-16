@@ -9,13 +9,29 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="FluentAssertions" Version="8.5.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="NetArchTest.Rules" Version="1.3.2" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\WorkoutTracker.Domain\WorkoutTracker.Domain.csproj" />
+    <ProjectReference Include="..\..\src\WorkoutTracker.Application\WorkoutTracker.Application.csproj" />
+    <ProjectReference Include="..\..\src\WorkoutTracker.Persistence\WorkoutTracker.Persistence.csproj" />
+    <ProjectReference Include="..\..\src\WorkoutTracker.Infrastructure\WorkoutTracker.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\WorkoutTracker.Web.Presentation\WorkoutTracker.Web.Presentation.csproj" />
+    <ProjectReference Include="..\..\src\WorkoutTracker.Web.Host\WorkoutTracker.Web.Host.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="SonarAnalyzer.CSharp" Version="10.15.0.120848" />
+    <PackageReference Update="StyleCop.Analyzers" Version="1.1.118" />
   </ItemGroup>
 
 </Project>

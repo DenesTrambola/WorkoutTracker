@@ -25,6 +25,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Domain.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Application.Tests", "tests\WorkoutTracker.Application.Tests\WorkoutTracker.Application.Tests.csproj", "{678B26D8-5D3A-4F5C-AFBA-ABDC763F2841}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -157,5 +163,8 @@ Global
 		{77989D06-ECB2-426D-80E5-A57CE280DB2A} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{208D9D9F-A328-46C5-850D-C1ABB6271944} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{678B26D8-5D3A-4F5C-AFBA-ABDC763F2841} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A8B24662-BFA1-46EF-A370-6B00C9B6D85A}
 	EndGlobalSection
 EndGlobal
