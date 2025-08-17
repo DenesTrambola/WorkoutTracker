@@ -346,7 +346,7 @@ public sealed class RoutineTests
     }
 
     [Fact]
-    public void RemoveData_Should_ReturnSuccess_When_ValuesAreValid()
+    public void RemoveExercise_Should_ReturnSuccess_When_ValuesAreValid()
     {
         // Arrange
         Routine routine = Routine.Create(
@@ -373,7 +373,7 @@ public sealed class RoutineTests
     }
 
     [Fact]
-    public void RemoveData_Should_ReturnFailure_When_RoutineExerciseIdIsNull()
+    public void RemoveExercise_Should_ReturnFailure_When_RoutineExerciseIdIsNull()
     {
         // Arrange
         Routine routine = Routine.Create(
@@ -393,7 +393,7 @@ public sealed class RoutineTests
     }
 
     [Fact]
-    public void RemoveData_Should_ReturnFailure_When_RoutineExerciseIsNotFound()
+    public void RemoveExercise_Should_ReturnFailure_When_RoutineExerciseIsNotFound()
     {
         // Arrange
         Routine routine = Routine.Create(
