@@ -1,11 +1,11 @@
 namespace WorkoutTracker.Application.Shared.Models;
 
-public record EmailMessage
-{
-    public string From { get; init; } = default!;
-    public string To { get; init; } = default!;
-    public string? Subject { get; init; }
-    public string? Body { get; init; }
-    public bool IsHtml { get; init; } = true;
-    public IReadOnlyCollection<EmailAttachement>? Attachements { get; init; }
-}
+using WorkoutTracker.Domain.Users.ValueObjects;
+
+public record EmailMessage(
+    Email From,
+    Email To,
+    string? Subject = null,
+    string? Body = null,
+    bool IsHtml = true,
+    params IReadOnlyCollection<EmailAttachement> Attachements);
