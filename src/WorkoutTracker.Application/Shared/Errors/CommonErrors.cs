@@ -13,4 +13,9 @@ public static partial class ApplicationErrors
         => new Error(
             $"{name}.CannotAddToDatabase",
             $"An error occured while adding {name} into the database.");
+
+    internal static Error NotFound(string name)
+        => new Error(
+            $"{name}.NotFound",
+            $"{name} was not found.");
 }

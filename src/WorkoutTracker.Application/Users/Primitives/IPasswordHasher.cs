@@ -5,8 +5,12 @@ using WorkoutTracker.Domain.Users.ValueObjects;
 
 public interface IPasswordHasher
 {
-    Task<Result<PasswordHash>> HashAsync(Password password,
+    Task<Result<PasswordHash>> HashAsync(
+        Password password,
         CancellationToken cancellationToken = default);
 
-    Task<Result<bool>> VerifyAsync(Password password, PasswordHash passwordHash);
+    Task<Result> VerifyAsync(
+        Password password,
+        PasswordHash passwordHash,
+        CancellationToken cancellationToken = default);
 }

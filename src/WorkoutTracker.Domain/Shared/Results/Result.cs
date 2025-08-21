@@ -2,7 +2,6 @@ namespace WorkoutTracker.Domain.Shared.Results;
 
 using System.Diagnostics.CodeAnalysis;
 using WorkoutTracker.Domain.Shared.Errors;
-using WorkoutTracker.Domain.Shared.Exceptions;
 
 public class Result
 {
@@ -10,47 +9,45 @@ public class Result
     public bool IsFailure => !IsSuccess;
     public Error[] Errors { get; }
 
-    protected internal Result(bool isSuccess, Error error)
-    {
-        if (isSuccess && error != DomainErrors.None)
-            throw new SuccessfulResultCannotHaveErrorsException();
-
-        if (!isSuccess && error == DomainErrors.None)
-            throw new FailedResultMustHaveErrorsException();
-
-        IsSuccess = isSuccess;
-        Errors = new[] { error };
-    }
-
-    protected internal Result(bool isSuccess, [NotNull] Error[] errors)
+    protected internal Result(bool isSuccess, [NotNull] params Error[] errors)
     {
         if (isSuccess && errors.Length > 0)
-            throw new SuccessfulResultCannotHaveErrorsException();
-
+            errors = new[] { DomainErrors.None };
+        
         if (!isSuccess && errors.Length == 0)
-            throw new FailedResultMustHaveErrorsException();
-
+            errors = new[] { DomainErrors.Unknown };
+        
         IsSuccess = isSuccess;
         Errors = errors;
     }
 
     public static Result Success()
-        => new Result(true, DomainErrors.None);
-
-    public static Result Failure(Error error)
-        => new Result(false, error ?? throw new NullErrorException());
-
-    public static Result Failure(params Error[] errors)
-        => new Result(false, errors ?? throw new EmptyArrayException());
+    {
+        return new Result(true, DomainErrors.None);
+    }
 
     public static Result<TValue> Success<TValue>(TValue value)
-        => new Result<TValue>(value, true, DomainErrors.None);
+    {
+        return new Result<TValue>(value, true, DomainErrors.None);
+    }
 
-    public static Result<TValue> Failure<TValue>(Error error)
-        => new Result<TValue>(default!, false, error ?? throw new NullErrorException());
+    public static Result Failure(params Error[] errors)
+    {
+        var newErrors = errors
+            ?.Where(e => e != DomainErrors.None).ToArray()
+            ?? new[] { DomainErrors.Unknown };
+
+        return new Result(false, newErrors);
+    }
 
     public static Result<TValue> Failure<TValue>(params Error[] errors)
-        => new Result<TValue>(default!, false, errors ?? throw new EmptyArrayException());
+    {
+        var newErrors = errors
+            ?.Where(e => e != DomainErrors.None).ToArray()
+            ?? new[] { DomainErrors.Unknown };
+
+        return new Result<TValue>(default!, false, newErrors);
+    }
 
     public static Result Ensure(bool condition, [NotNull] Error error)
         => condition ? Success() : Failure(error);
@@ -66,7 +63,7 @@ public class Result
     public static Result Combine(params Result[] results)
     {
         if (results == null || results.Length == 0)
-            throw new NoValueInCombinedResultsException();
+            return Failure();
 
         if (results.Any(r => r.IsFailure))
             return Failure(results.SelectMany(r => r.Errors).Distinct().ToArray());
@@ -77,7 +74,7 @@ public class Result
     public static Result<TValue> Combine<TValue>(params Result<TValue>[] results)
     {
         if (results == null || results.Length == 0)
-            throw new NoValueInCombinedResultsException();
+            return Failure<TValue>();
 
         if (results.Any(r => r.IsFailure))
             return Failure<TValue>(results.SelectMany(r => r.Errors).Distinct().ToArray());

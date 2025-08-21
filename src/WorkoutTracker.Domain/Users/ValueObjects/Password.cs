@@ -17,14 +17,14 @@ public class Password : ValueObject
 
     public static Result<Password> Create(string plainPassword)
     {
-        return Result.Combine(
+        return EnsureNotEmpty(plainPassword).OnSuccess(() => Result.Combine(
             EnsureNotEmpty(plainPassword),
             EnsureLength(plainPassword),
             EnsureContainsUppercase(plainPassword),
             EnsureContainsLowercase(plainPassword),
             EnsureContainsDigit(plainPassword),
             EnsureContainsSpecial(plainPassword))
-            .Map(pp => new Password(pp));
+        .Map(pp => new Password(pp)));
     }
 
     private static Result<string> EnsureNotEmpty(string plainPassword)

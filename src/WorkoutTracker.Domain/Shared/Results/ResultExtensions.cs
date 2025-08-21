@@ -36,17 +36,9 @@ public static class ResultExtensions
         [NotNull] Func<TValue, Task<Result<TValue>>> predicate,
         Error error)
     {
-        return result.IsFailure ? result : await predicate(result.ValueOrDefault());
-    }
-
-    public static Result<TValue> OnSuccess<TValue>(
-        [NotNull] this Result<TValue> result,
-        [NotNull] Action<TValue> action)
-    {
-        if (result.IsSuccess)
-            action(result.ValueOrDefault());
-
-        return result;
+        return result.IsSuccess
+            ? await predicate(result.ValueOrDefault())
+            : result;
     }
 
     public static Result<TValue> OnSuccess<TValue>(
@@ -63,23 +55,77 @@ public static class ResultExtensions
     }
 
     public static Result<TValue> OnSuccess<TValue>(
+        [NotNull] this Result<TValue> result,
+        [NotNull] Func<Result<TValue>> callback)
+    {
+        if (result.IsFailure)
+            return Result.Failure<TValue>(result.Errors);
+
+        return callback();
+    }
+
+    public static Result<TValue> OnSuccess<TValue>(
         [NotNull] this Result result,
         [NotNull] Func<Result<TValue>> callback)
     {
-        if (result.IsSuccess)
-            return callback();
+        return result.IsSuccess
+            ? callback()
+            : Result.Failure<TValue>(result.Errors);
+    }
 
-        return Result.Failure<TValue>(result.Errors);
+    public static Result<TValue> OnSuccess<TValue>(
+        [NotNull] this Result<TValue> result,
+        [NotNull] Action<TValue> action)
+    {
+        if (result.IsSuccess)
+            action(result.ValueOrDefault());
+
+        return result;
+    }
+
+    public static Result<TValue> OnSuccess<TValue>(
+        [NotNull] this Result<TValue> result,
+        [NotNull] Func<TValue, Result<TValue>> action)
+    {
+        return result.IsSuccess
+            ? action(result.ValueOrDefault())
+            : Result.Failure<TValue>(result.Errors);
     }
 
     public async static Task<Result> OnSuccessAsync<TValue>(
         [NotNull] this Result<TValue> result,
         [NotNull] Func<TValue, Task<Result>> callback)
     {
-        if (result.IsSuccess)
-            return await callback(result.ValueOrDefault());
+        return result.IsSuccess
+            ? await callback(result.ValueOrDefault())
+            : Result.Failure(result.Errors);
+    }
 
-        return Result.Failure(result.Errors);
+    public static async Task<Result> OnSuccessAsync(
+        [NotNull] this Result result,
+        [NotNull] Func<Task<Result>> callback)
+    {
+        return result.IsSuccess
+            ? await callback()
+            : Result.Failure(result.Errors);
+    }
+
+    public static async Task<Result<TValue>> OnSuccessAsync<TValue>(
+        [NotNull] this Result result,
+        [NotNull] Func<Task<Result<TValue>>> callback)
+    {
+        return result.IsSuccess
+            ? await callback()
+            : Result.Failure<TValue>(result.Errors);
+    }
+
+    public static async Task<Result<TValue>> OnSuccessAsync<TValue>(
+        [NotNull] this Result<TValue> result,
+        [NotNull] Func<TValue, Task<Result<TValue>>> callback)
+    {
+        return result.IsSuccess
+            ? await callback(result.ValueOrDefault())
+            : result;
     }
 
     public static Result<TValue> OnFailure<TValue>(

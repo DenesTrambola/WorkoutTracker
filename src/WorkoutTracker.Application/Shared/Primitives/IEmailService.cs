@@ -1,4 +1,4 @@
-namespace WorkoutTracker.Application.Users.Primitives;
+namespace WorkoutTracker.Application.Shared.Primitives;
 
 using WorkoutTracker.Application.Shared.Models;
 using WorkoutTracker.Domain.Shared.Results;

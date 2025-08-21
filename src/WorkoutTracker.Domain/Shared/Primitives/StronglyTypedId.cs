@@ -4,10 +4,10 @@ using WorkoutTracker.Domain.Shared.Results;
 
 public abstract record StronglyTypedId<TId>
 {
-    public TId Id { get; protected set; }
+    public TId IdValue { get; protected set; }
 
     protected StronglyTypedId(TId id)
     {
-        Id = id;
+        IdValue = id;
     }
 }

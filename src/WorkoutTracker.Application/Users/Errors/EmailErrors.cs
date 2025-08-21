@@ -6,11 +6,8 @@ public static partial class ApplicationErrors
 {
     public static class Email
     {
-        public static readonly Error AlreadyExists = Shared.Errors.ApplicationErrors.AlreadyExists(
-            nameof(Email));
-
-        public static readonly Error SendingFailed = new Error(
+        public static readonly Error SendingFailed = new(
             $"{nameof(Email)}.SendingFailed",
-            $"An error occured while sending {nameof(Email)}.");
+            $"An error occurred while sending the {nameof(Email)}.");
     }
 }

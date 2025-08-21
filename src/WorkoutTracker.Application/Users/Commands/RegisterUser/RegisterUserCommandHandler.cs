@@ -5,8 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using WorkoutTracker.Application.Shared.Models;
+using WorkoutTracker.Application.Shared.Primitives;
 using WorkoutTracker.Application.Shared.Primitives.Messaging;
-using WorkoutTracker.Application.Users.Errors;
 using WorkoutTracker.Application.Users.Primitives;
 using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Domain.Users;
@@ -27,13 +27,13 @@ public sealed class RegisterUserCommandHandler(
         [NotNull] RegisterUserCommand request,
         CancellationToken cancellationToken = default)
     {
-        var usernameResult = await ValidateAndCreateUsernameAsync(
+        var usernameResult = await CreateAndValidateUsernameAsync(
             request.Username, cancellationToken);
 
         var passwordHashResult = await ValidateAndHashPasswordAsync(
             request.Password, cancellationToken);
 
-        var emailResult = await ValidateAndCreateEmailAsync(
+        var emailResult = await CreateAndValidateEmailAsync(
             request.Email, cancellationToken);
 
         var fullNameResult = FullName.Create(request.FirstName, request.LastName);
@@ -55,38 +55,32 @@ public sealed class RegisterUserCommandHandler(
                 gender,
                 UserRole.User,
                 birthDate))
-            .EnsureAsync(
-            async u => await _userRepository.AddAsync(u, cancellationToken),
-            ApplicationErrors.User.AddingToDatabaseFailed))
+            .OnSuccessAsync(async u => await _userRepository.AddAsync(u, cancellationToken)))
             .OnSuccessAsync(async u => await SendRegistrationSuccessEmailAsync(u));
     }
 
-    private async Task<Result<Username>> ValidateAndCreateUsernameAsync(
+    private async Task<Result<Username>> CreateAndValidateUsernameAsync(
         string username,
         CancellationToken cancellationToken = default)
     {
-        return await Username.Create(username)
-            .EnsureAsync(
-            async u => (await _userRepository.IsUsernameUnique(u, cancellationToken)).ValueOrDefault(),
-            ApplicationErrors.Username.AlreadyExists);
+        return await Username.Create(username).OnSuccessAsync(
+            async u => await _userRepository.ValidateUsernameUniqueness(u, cancellationToken));
     }
 
     private async Task<Result<PasswordHash>> ValidateAndHashPasswordAsync(
         string password,
         CancellationToken cancellationToken = default)
     {
-        return await Password.Create(password)
-            .MapAsync(async p => await _passwordHasher.HashAsync(p, cancellationToken));
+        return await Password.Create(password).MapAsync(
+            async p => await _passwordHasher.HashAsync(p, cancellationToken));
     }
 
-    private async Task<Result<Email>> ValidateAndCreateEmailAsync(
+    private async Task<Result<Email>> CreateAndValidateEmailAsync(
         string email,
         CancellationToken cancellationToken = default)
     {
-        return await Email.Create(email)
-            .EnsureAsync(
-            async e => (await _userRepository.IsEmailUnique(e, cancellationToken)).ValueOrDefault(),
-            ApplicationErrors.Email.AlreadyExists);
+        return await Email.Create(email).OnSuccessAsync(
+            async e => await _userRepository.ValidateEmailUniqueness(e, cancellationToken));
     }
 
     private async Task<Result> SendRegistrationSuccessEmailAsync(User recipient)
@@ -95,13 +89,11 @@ public sealed class RegisterUserCommandHandler(
            Email.Create("tramboladenes@gmail.com").ValueOrDefault(),
            recipient.Email,
            "WorkoutTracker: Registration was successful",
-           $"Hey {recipient.Username.Login}!\n\n" +
+           $"Hey {recipient.Username.Value}!\n\n" +
            $"You have registered a new WorkoutTracker account, now you can use the web-app fully!\n" +
            "We're glad you've chosen our application to manage your workout routines!\n\n" +
            "Good luck with your progress and remember: NEVER skip leg day!");
 
-        return Result.Ensure(
-            (await _emailService.SendEmailAsync(eMsg)).IsSuccess,
-            ApplicationErrors.Email.SendingFailed);
+        return await _emailService.SendEmailAsync(eMsg);
     }
 }
