@@ -10,43 +10,43 @@ public class Email : ValueObject
 {
     public const short MaxLength = 320;
 
-    public string Address { get; private set; }
+    public string Value { get; private set; }
 
-    private Email(string address)
+    private Email(string value)
     {
-        Address = address;
+        Value = value;
     }
 
-    public static Result<Email> Create(string address)
+    public static Result<Email> Create(string value)
     {
         return Result.Combine(
-            EnsureNotEmpty(address),
-            EnsureNotTooLong(address),
-            EnsureFormatIsValid(address))
-        .Map(a => new Email(a));
+            EnsureNotEmpty(value),
+            EnsureNotTooLong(value),
+            EnsureFormatIsValid(value))
+        .Map(v => new Email(v));
     }
 
-    private static Result<string> EnsureNotEmpty(string address)
+    private static Result<string> EnsureNotEmpty(string value)
     {
         return Result.Ensure(
-            address,
-            address => !string.IsNullOrWhiteSpace(address),
+            value,
+            value => !string.IsNullOrWhiteSpace(value),
             DomainErrors.Email.Empty);
     }
 
-    private static Result<string> EnsureNotTooLong(string address)
+    private static Result<string> EnsureNotTooLong(string value)
     {
         return Result.Ensure(
-            address,
-            address => MaxLength >= address.Length,
+            value,
+            value => MaxLength >= value.Length,
             DomainErrors.Email.TooLong);
     }
 
-    private static Result<string> EnsureFormatIsValid(string address)
+    private static Result<string> EnsureFormatIsValid(string value)
     {
         return Result.Ensure(
-            address,
-            address => Regex.IsMatch(address, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"),
+            value,
+            value => Regex.IsMatch(value, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"),
             DomainErrors.Email.InvalidFormat);
     }
 
@@ -59,6 +59,6 @@ public class Email : ValueObject
 
     protected override IEnumerable<object> GetAtomicValues()
     {
-        yield return Address;
+        yield return Value;
     }
 }

@@ -9,34 +9,34 @@ public class Username : ValueObject
 {
     public const short MaxLength = 32;
 
-    public string Login { get; private set; }
+    public string Value { get; private set; }
 
-    private Username(string login)
+    private Username(string value)
     {
-        Login = login;
+        Value = value;
     }
 
-    public static Result<Username> Create(string login)
+    public static Result<Username> Create(string value)
     {
         return Result.Combine(
-            EnsureNotEmpty(login),
-            EnsureNotTooLong(login))
-            .Map(l => new Username(l));
+            EnsureNotEmpty(value),
+            EnsureNotTooLong(value))
+            .Map(v => new Username(v));
     }
 
-    private static Result<string> EnsureNotEmpty(string login)
+    private static Result<string> EnsureNotEmpty(string value)
     {
         return Result.Ensure(
-            login,
-            login => !string.IsNullOrWhiteSpace(login),
+            value,
+            value => !string.IsNullOrWhiteSpace(value),
             DomainErrors.Username.Empty);
     }
 
-    private static Result<string> EnsureNotTooLong(string login)
+    private static Result<string> EnsureNotTooLong(string value)
     {
         return Result.Ensure(
-            login,
-            login => login.Length <= MaxLength,
+            value,
+            value => value.Length <= MaxLength,
             DomainErrors.Username.TooLong);
     }
 
@@ -49,6 +49,6 @@ public class Username : ValueObject
 
     protected override IEnumerable<object> GetAtomicValues()
     {
-        yield return Login;
+        yield return Value;
     }
 }

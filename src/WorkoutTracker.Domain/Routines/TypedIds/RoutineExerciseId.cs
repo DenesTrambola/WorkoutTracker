@@ -21,6 +21,6 @@ public record RoutineExerciseId : StronglyTypedId<Guid>
         return Result.Ensure(
             routineExerciseId,
             reId => reId is not null,
-            DomainErrors.RoutineExercise.Null);
+            DomainErrors.RoutineExerciseId.Null);
     }
 }

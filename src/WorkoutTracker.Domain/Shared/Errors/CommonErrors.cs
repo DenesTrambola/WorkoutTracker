@@ -6,6 +6,10 @@ public static partial class DomainErrors
         string.Empty,
         string.Empty);
 
+    public static readonly Error Unknown = new Error(
+        "Unknown",
+        "An unknown error occurred.");
+
     internal static Error Empty(string name)
         => new Error(
             $"{name}.Empty",
