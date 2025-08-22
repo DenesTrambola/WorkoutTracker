@@ -7,11 +7,11 @@ using WorkoutTracker.Domain.Shared.Results;
 
 public class ExercisePosition : ValueObject
 {
-    public byte Position { get; private set; }
+    public byte Value { get; private set; }
 
     private ExercisePosition(byte position)
     {
-        Position = position;
+        Value = position;
     }
 
     public static Result<ExercisePosition> Create(byte position)
@@ -37,6 +37,6 @@ public class ExercisePosition : ValueObject
 
     protected override IEnumerable<object> GetAtomicValues()
     {
-        yield return Position;
+        yield return Value;
     }
 }

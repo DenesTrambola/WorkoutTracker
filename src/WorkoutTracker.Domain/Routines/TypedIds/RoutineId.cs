@@ -4,16 +4,30 @@ using WorkoutTracker.Domain.Routines.Errors;
 using WorkoutTracker.Domain.Shared.Primitives;
 using WorkoutTracker.Domain.Shared.Results;
 
-public record RoutineId : StronglyTypedId<Guid>
+public sealed record RoutineId : StronglyTypedId<Guid>
 {
-    protected RoutineId(Guid id)
+    private RoutineId(Guid id)
         : base(id)
     {
     }
 
-    public static Result<RoutineId> New()
+    private RoutineId()
+        : base(Guid.Empty)
+    {
+    }
+
+    public static Result<RoutineId> New() // Consider renaming to CreateNew
     {
         return new RoutineId(Guid.NewGuid());
+    }
+
+    public static Result<RoutineId> FromGuid(Guid value)
+    {
+        return Result.Ensure(
+            value,
+            v => v != Guid.Empty,
+            DomainErrors.RoutineId.Empty)
+            .Map(v => new RoutineId(v));
     }
 
     public static Result<RoutineId> EnsureNotNull(RoutineId routineId)
