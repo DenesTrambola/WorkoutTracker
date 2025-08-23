@@ -7,5 +7,4 @@ public record EmailMessage(
     Email To,
     string? Subject = null,
     string? Body = null,
-    bool IsHtml = true,
-    params IReadOnlyCollection<EmailAttachement> Attachements);
+    bool IsHtml = true);
