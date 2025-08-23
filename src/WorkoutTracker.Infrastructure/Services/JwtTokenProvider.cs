@@ -1,4 +1,4 @@
-namespace WorkoutTracker.Infrastructure;
+namespace WorkoutTracker.Infrastructure.Services;
 
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

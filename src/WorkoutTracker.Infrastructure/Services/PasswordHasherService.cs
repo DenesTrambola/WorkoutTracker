@@ -1,4 +1,4 @@
-namespace WorkoutTracker.Infrastructure;
+namespace WorkoutTracker.Infrastructure.Services;
 
 using WorkoutTracker.Application.Users.Errors;
 using WorkoutTracker.Application.Users.Primitives;
@@ -15,7 +15,7 @@ public sealed class PasswordHasherService : IPasswordHasher
     {
         try
         {
-            string hashed = BCrypt.Net.BCrypt.HashPassword(password.Value, WorkFactor);
+            var hashed = BCrypt.Net.BCrypt.HashPassword(password.Value, WorkFactor);
             return await Task.Run(() => Result.Success(
                 PasswordHash.Create(hashed).ValueOrDefault()),
                 cancellationToken);
@@ -35,7 +35,7 @@ public sealed class PasswordHasherService : IPasswordHasher
     {
         try
         {
-            bool verified = BCrypt.Net.BCrypt.Verify(password.Value, passwordHash.Value);
+            var verified = BCrypt.Net.BCrypt.Verify(password.Value, passwordHash.Value);
             return await Task.Run(() => verified
                 ? Result.Success()
                 : Result.Failure(ApplicationErrors.Password.VerificationFailed),

@@ -3,6 +3,7 @@ namespace WorkoutTracker.Infrastructure.Tests;
 using FluentAssertions;
 using WorkoutTracker.Application.Users.Errors;
 using WorkoutTracker.Domain.Users.ValueObjects;
+using WorkoutTracker.Infrastructure.Services;
 
 public class PasswordHasherServiceTests
 {
