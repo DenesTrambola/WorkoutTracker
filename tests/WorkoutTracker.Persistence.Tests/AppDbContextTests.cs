@@ -20,7 +20,7 @@ using WorkoutTracker.Domain.Users.ValueObjects;
 public class AppDbContextTests
 {
     [Fact]
-    public void AppDbContext_Should_SetupConnection()
+    public async Task AppDbContext_Should_SetupConnection()
     {
         // Arrange
         using var context = new AppDbContext(
@@ -29,22 +29,22 @@ public class AppDbContextTests
                 .Options);
 
         // Act
-        context.Database.EnsureCreated();
+        await context.Database.EnsureCreatedAsync();
 
         // Assert
-        context.Database.CanConnect().Should().BeTrue();
+        (await context.Database.CanConnectAsync()).Should().BeTrue();
         context.Model.GetEntityTypes().Should().NotBeEmpty();
     }
 
     [Fact]
-    public void AppDbContext_Should_AddExercise()
+    public async Task AppDbContext_Should_AddExercise()
     {
         // Arrange
         using var context = new AppDbContext(
             new DbContextOptionsBuilder<AppDbContext>()
                 .UseInMemoryDatabase("WorkoutTrackerTestDb")
                 .Options);
-        context.Database.EnsureCreated();
+        await context.Database.EnsureCreatedAsync();
         context.Model.GetEntityTypes().Should().NotBeEmpty();
 
         var exercise = Exercise.Create(
@@ -55,8 +55,8 @@ public class AppDbContextTests
             .ValueOrDefault();
 
         // Act
-        context.Add(exercise);
-        context.SaveChanges();
+        await context.AddAsync(exercise);
+        await context.SaveChangesAsync();
 
         // Assert
         context.Exercises.Should().Contain(exercise);

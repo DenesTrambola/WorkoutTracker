@@ -17,11 +17,7 @@ public interface IRepository<T, TId>
         T entity,
         CancellationToken cancellationToken = default);
 
-    Task<Result<T>> Update(
-        T entity,
-        CancellationToken cancellationToken = default);
-
-    Task<Result> Delete(
+    Task<Result> RemoveAsync(
         TId id,
         CancellationToken cancellationToken = default);
 }
