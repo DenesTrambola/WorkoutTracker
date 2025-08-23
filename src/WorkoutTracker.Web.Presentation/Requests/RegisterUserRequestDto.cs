@@ -1,17 +1,28 @@
-namespace WorkoutTracker.Application.Users.Commands.RegisterUser;
+namespace WorkoutTracker.Web.Presentation.Requests;
 
-using WorkoutTracker.Application.Shared.Primitives.Messaging;
-using WorkoutTracker.Domain.Shared.Results;
-using WorkoutTracker.Domain.Users.ValueObjects;
+using System.ComponentModel.DataAnnotations;
 
-public sealed record RegisterUserCommand
-    : ICommand
+public sealed record RegisterUserRequestDto
 {
+    [Required]
     public string Username { get; init; } = null!;
+
+    [Required]
     public string Password { get; init; } = null!;
+
+    [Required]
+    [EmailAddress]
     public string Email { get; init; } = null!;
+
+    [Required]
     public string FirstName { get; init; } = null!;
+
+    [Required]
     public string LastName { get; init; } = null!;
+
+    [Required]
     public byte Gender { get; init; }
+
+    [Required]
     public DateOnly BirthDate { get; init; }
 }
