@@ -6,6 +6,7 @@ using WorkoutTracker.Application.Shared.Models;
 using WorkoutTracker.Application.Shared.Primitives;
 using WorkoutTracker.Application.Users.Errors;
 using WorkoutTracker.Domain.Shared.Results;
+using WorkoutTracker.Infrastructure.Models;
 
 public sealed class SmtpEmailService : IEmailService
 {

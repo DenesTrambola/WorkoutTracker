@@ -1,4 +1,4 @@
-namespace WorkoutTracker.Infrastructure;
+namespace WorkoutTracker.Infrastructure.Models;
 
 public sealed record SmtpEmailSettings(
     string Username,
