@@ -118,7 +118,7 @@ public sealed class LoginCommandHandlerTests
                 u, _passwordHash, _email, _fullName, 0, 0, _birthDate)));
         _passwordHasherMock
             .Setup(ph => ph.VerifyAsync(It.IsAny<Password>(), It.IsAny<PasswordHash>(), default))
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure(ApplicationErrors.Password.VerificationFailed));
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);

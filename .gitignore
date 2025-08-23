@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudio,windows,node,react
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudio,windows,node,react
 
+appsettings.Development.json
+
 ### Node ###
 # Logs
 logs
