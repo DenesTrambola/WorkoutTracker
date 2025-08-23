@@ -16,12 +16,15 @@ public sealed class PasswordHasherService : IPasswordHasher
         try
         {
             string hashed = BCrypt.Net.BCrypt.HashPassword(password.Value, WorkFactor);
-            return await Task.FromResult(Result.Success(PasswordHash.Create(hashed).ValueOrDefault()));
+            return await Task.Run(() => Result.Success(
+                PasswordHash.Create(hashed).ValueOrDefault()),
+                cancellationToken);
         }
         catch (Exception)
         {
-            return await Task.FromResult(Result.Failure<PasswordHash>(
-                ApplicationErrors.PasswordHash.CannotHash));
+            return await Task.Run(() => Result.Failure<PasswordHash>(
+                ApplicationErrors.PasswordHash.CannotHash),
+                cancellationToken);
         }
     }
 
@@ -33,14 +36,16 @@ public sealed class PasswordHasherService : IPasswordHasher
         try
         {
             bool verified = BCrypt.Net.BCrypt.Verify(password.Value, passwordHash.Value);
-            return await Task.FromResult(verified
+            return await Task.Run(() => verified
                 ? Result.Success()
-                : Result.Failure(ApplicationErrors.Password.VerificationFailed));
+                : Result.Failure(ApplicationErrors.Password.VerificationFailed),
+                cancellationToken);
         }
         catch (Exception)
         {
-            return await Task.FromResult(Result.Failure(
-                ApplicationErrors.Password.VerificationFailed));
+            return await Task.Run(() => Result.Failure(
+                ApplicationErrors.Password.VerificationFailed),
+                cancellationToken);
         }
     }
 }
