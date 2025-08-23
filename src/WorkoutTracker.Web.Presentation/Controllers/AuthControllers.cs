@@ -2,6 +2,7 @@ namespace WorkoutTracker.Web.Presentation.Controllers;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using WorkoutTracker.Application.Users.Commands.Login;
 using WorkoutTracker.Application.Users.Commands.RegisterUser;
 using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Web.Presentation.Primitives;
@@ -38,6 +39,28 @@ public sealed class AuthControllers : ApiController
             : BadRequest(new
             {
                 Message = "Registration failed",
+                Errors = result.Errors
+            });
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(
+        [FromBody] LoginRequestDto request,
+        CancellationToken cancellationToken)
+    {
+        var command = new LoginCommand
+        {
+            Username = request.Username,
+            Password = request.Password
+        };
+
+        var result = await Sender.Send(command, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.ValueOrDefault()) 
+            : BadRequest(new
+            {
+                Message = "Login failed",
                 Errors = result.Errors
             });
     }

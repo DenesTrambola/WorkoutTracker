@@ -42,7 +42,11 @@ public sealed class LoginCommandHandlerTests
     public async Task Handle_Should_ReturnSuccess_When_UserIsLoggedIn()
     {
         // Arrange
-        var command = new LoginCommand(_username, _password);
+        var command = new LoginCommand
+        {
+            Username = _username,
+            Password = _password
+        };
 
         _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(It.IsAny<Username>(), default))
             .ReturnsAsync(Username.Create(command.Username).Map(u => User.Create(
@@ -66,7 +70,11 @@ public sealed class LoginCommandHandlerTests
     public async Task Handle_Should_ReturnFailure_When_UsernameIsInvalid()
     {
         // Arrange
-        var command = new LoginCommand(string.Empty, _password);
+        var command = new LoginCommand
+        {
+            Username = string.Empty,
+            Password = _password
+        };
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -80,7 +88,11 @@ public sealed class LoginCommandHandlerTests
     public async Task Handle_Should_ReturnFailure_When_PasswordIsInvalid()
     {
         // Arrange
-        var command = new LoginCommand(_username, string.Empty);
+        var command = new LoginCommand
+        {
+            Username = _username,
+            Password = string.Empty
+        };
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -94,7 +106,11 @@ public sealed class LoginCommandHandlerTests
     public async Task Handle_Should_ReturnFailure_When_UserNotFound()
     {
         // Arrange
-        var command = new LoginCommand(_username, _password);
+        var command = new LoginCommand
+        {
+            Username = _username,
+            Password = _password
+        };
 
         _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(It.IsAny<Username>(), default))
             .ReturnsAsync(Result.Failure<User>(ApplicationErrors.User.NotFound));
@@ -111,7 +127,11 @@ public sealed class LoginCommandHandlerTests
     public async Task Handle_Should_ReturnFailure_When_PasswordVerificationFails()
     {
         // Arrange
-        var command = new LoginCommand(_username, _password);
+        var command = new LoginCommand
+        {
+            Username = _username,
+            Password = _password
+        };
 
         _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(It.IsAny<Username>(), default))
             .ReturnsAsync(Username.Create(command.Username).Map(u => User.Create(
@@ -132,7 +152,11 @@ public sealed class LoginCommandHandlerTests
     public async Task Handle_Should_ReturnFailure_When_GeneratingAccessTokenFails()
     {
         // Arrange
-        var command = new LoginCommand(_username, _password);
+        var command = new LoginCommand
+        {
+            Username = _username,
+            Password = _password
+        };
 
         _userRepositoryMock.Setup(ur => ur.GetByUsernameAsync(It.IsAny<Username>(), default))
             .ReturnsAsync(Username.Create(command.Username).Map(u => User.Create(
