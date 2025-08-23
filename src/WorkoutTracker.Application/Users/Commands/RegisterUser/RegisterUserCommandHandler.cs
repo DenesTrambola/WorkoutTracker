@@ -56,7 +56,7 @@ public sealed class RegisterUserCommandHandler(
                 UserRole.User,
                 birthDate))
             .OnSuccessAsync(async u => await _userRepository.AddAsync(u, cancellationToken)))
-            .OnSuccessAsync(async u => await SendRegistrationSuccessEmailAsync(u));
+            .OnSuccessAsync(async u => await SendRegistrationSuccessEmail(u));
     }
 
     private async Task<Result<Username>> CreateAndValidateUsernameAsync(
@@ -83,7 +83,7 @@ public sealed class RegisterUserCommandHandler(
             async e => await _userRepository.ValidateEmailUniqueness(e, cancellationToken));
     }
 
-    private async Task<Result> SendRegistrationSuccessEmailAsync(User recipient)
+    private Task<Result> SendRegistrationSuccessEmail(User recipient)
     {
        EmailMessage eMsg = new EmailMessage(
            Email.Create("tramboladenes@gmail.com").ValueOrDefault(),
@@ -94,6 +94,6 @@ public sealed class RegisterUserCommandHandler(
            "We're glad you've chosen our application to manage your workout routines!\n\n" +
            "Good luck with your progress and remember: NEVER skip leg day!");
 
-        return await _emailService.SendEmailAsync(eMsg);
+        return _emailService.SendEmailAsync(eMsg);
     }
 }

@@ -479,13 +479,13 @@ public sealed class RegisterUserCommandHandlerTests
                 FullName.Create(command.FirstName, command.LastName).ValueOrDefault(),
                 0, 0, command.BirthDate));
         _emailServiceMock.Setup(es => es.SendEmailAsync(It.IsAny<EmailMessage>(), default))
-             .ReturnsAsync(Result.Failure(ApplicationErrors.Email.SendingFailed));
+             .ReturnsAsync(Result.Failure(ApplicationErrors.Email.CannotSend));
 
         // Act
         var result = await _sut.Handle(command);
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Errors.Should().Contain(ApplicationErrors.Email.SendingFailed);
+        result.Errors.Should().Contain(ApplicationErrors.Email.CannotSend);
     }
 }

@@ -1,6 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\WorkoutTracker.Domain\WorkoutTracker.Domain.csproj" />
     <ProjectReference Include="..\WorkoutTracker.Application\WorkoutTracker.Application.csproj" />
   </ItemGroup>
