@@ -1,4 +1,5 @@
 version: "3.9"
+name: "workout-tracker"
 
 services:
   db:
@@ -23,6 +24,7 @@ services:
       - ./db/init.sql:/init.sql
     entrypoint: >
       /bin/bash -c "
+        sleep 20 &&
         /opt/mssql-tools/bin/sqlcmd -S db -U sa -P ${SA_PASSWORD} -d master -i /init.sql
       "
     networks:

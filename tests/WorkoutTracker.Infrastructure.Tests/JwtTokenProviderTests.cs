@@ -7,6 +7,7 @@ using WorkoutTracker.Domain.Users.Enums;
 using WorkoutTracker.Domain.Users.TypedIds;
 using WorkoutTracker.Domain.Users.ValueObjects;
 using WorkoutTracker.Infrastructure.Models;
+using WorkoutTracker.Infrastructure.Services;
 
 public class JwtTokenProviderTests
 {
