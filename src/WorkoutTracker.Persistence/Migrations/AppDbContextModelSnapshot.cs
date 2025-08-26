@@ -314,7 +314,7 @@ namespace WorkoutTracker.Persistence.Migrations
                     b.HasOne("WorkoutTracker.Domain.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 

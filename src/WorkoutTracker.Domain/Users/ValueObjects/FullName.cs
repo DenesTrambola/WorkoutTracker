@@ -20,36 +20,44 @@ public class FullName : ValueObject
 
     public static Result<FullName> Create(string firstName, string lastName)
     {
-        return Result.Zip(
-            EnsureNotEmpty(firstName, lastName),
-            EnsureNotTooLong(firstName, lastName),
-            (fn, ln) => new FullName(fn, ln));
+        return Result.Combine(
+            EnsureFirstNameNotEmpty(firstName),
+            EnsureLastNameNotEmpty(lastName),
+            EnsureFirstNameNotTooLong(firstName),
+            EnsureLastNameNotTooLong(lastName))
+            .OnSuccess(() => new FullName(firstName, lastName));
     }
 
-    private static Result<string> EnsureNotEmpty(string firstName, string lastName)
+    private static Result<string> EnsureFirstNameNotEmpty(string firstName)
     {
-        return Result.Combine(
-            Result.Ensure(
-                firstName,
-                fn => !string.IsNullOrWhiteSpace(fn),
-                DomainErrors.FirstName.Empty),
-            Result.Ensure(
-                lastName,
-                fn => !string.IsNullOrWhiteSpace(fn),
-                DomainErrors.LastName.Empty));
+        return Result.Ensure(
+            firstName,
+            fn => !string.IsNullOrWhiteSpace(fn),
+            DomainErrors.FirstName.Empty);
     }
 
-    private static Result<string> EnsureNotTooLong(string firstName, string lastName)
+    private static Result<string> EnsureLastNameNotEmpty(string lastName)
     {
-        return Result.Combine(
-            Result.Ensure(
-                firstName,
-                fn => fn.Length <= MaxLength,
-                DomainErrors.FirstName.TooLong),
-            Result.Ensure(
-                lastName,
-                ln => ln.Length <= MaxLength,
-                DomainErrors.LastName.TooLong));
+        return Result.Ensure(
+            lastName,
+            ln => !string.IsNullOrWhiteSpace(ln),
+            DomainErrors.LastName.Empty);
+    }
+
+    private static Result<string> EnsureFirstNameNotTooLong(string firstName)
+    {
+        return Result.Ensure(
+            firstName,
+            fn => fn.Length <= MaxLength,
+            DomainErrors.FirstName.TooLong);
+    }
+
+    private static Result<string> EnsureLastNameNotTooLong(string lastName)
+    {
+        return Result.Ensure(
+            lastName,
+            ln => ln.Length <= MaxLength,
+            DomainErrors.LastName.TooLong);
     }
 
     public static Result<FullName> EnsureNotNull(FullName? fullName)

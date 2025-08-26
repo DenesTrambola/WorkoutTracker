@@ -15,7 +15,6 @@ public class WebPresentationDependencyTests
         // Arrange
         var otherNamespaces = new[]
         {
-            RootNamespaces.DomainNamespace,
             RootNamespaces.WebHostNamespace
         };
 

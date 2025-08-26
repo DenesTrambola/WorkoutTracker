@@ -20,7 +20,13 @@ public class JwtTokenProviderTests
     public void GenerateToken_ShouldReturnValidToken()
     {
         // Arrange
-        var jwtSettings = new JwtSettings(SecretKey, ExpiryMinutes, Issuer, Audience);
+        var jwtSettings = new JwtOptions
+        {
+            SecretKey = SecretKey,
+            ExpiryMinutes = ExpiryMinutes,
+            Issuer = Issuer,
+            Audience = Audience
+        };
         var provider = new JwtTokenProvider(Options.Create(jwtSettings));
         var userId = UserId.New().ValueOrDefault();
         var email = Email.Create("test@example.com").ValueOrDefault();

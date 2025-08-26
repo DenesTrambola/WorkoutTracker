@@ -28,7 +28,7 @@ public sealed class LoginCommandHandlerTests
     private readonly FullName _fullName = FullName.Create("Deinesh", "Trombola").ValueOrDefault();
     private readonly DateOnly _birthDate = DateOnly.FromDateTime(DateTime.UtcNow);
 
-    private readonly AccessToken _accessToken = new("token", DateTime.UtcNow.AddHours(1));
+    private readonly AccessToken _accessToken;
 
     public LoginCommandHandlerTests()
     {
@@ -36,6 +36,12 @@ public sealed class LoginCommandHandlerTests
             _userRepositoryMock.Object,
             _passwordHasherMock.Object,
             _accessTokenProviderMock.Object);
+
+        _accessToken = new AccessToken
+        {
+            Token = "token",
+            ExpiresAt = DateTime.UtcNow.AddHours(1)
+        };
     }
 
     [Fact]

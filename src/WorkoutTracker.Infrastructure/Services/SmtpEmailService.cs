@@ -2,20 +2,16 @@ namespace WorkoutTracker.Infrastructure;
 
 using System.Net;
 using System.Net.Mail;
+using Microsoft.Extensions.Options;
 using WorkoutTracker.Application.Shared.Models;
 using WorkoutTracker.Application.Shared.Primitives;
 using WorkoutTracker.Application.Users.Errors;
 using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Infrastructure.Models;
 
-public sealed class SmtpEmailService : IEmailService
+public sealed class SmtpEmailService(IOptions<SmtpEmailOptions> options) : IEmailService
 {
-    private readonly SmtpEmailSettings _options;
-
-    public SmtpEmailService(SmtpEmailSettings options)
-    {
-        _options = options;
-    }
+    private readonly IOptions<SmtpEmailOptions> _options = options;
 
     public async Task<Result> SendEmailAsync(
         EmailMessage message,
@@ -25,12 +21,12 @@ public sealed class SmtpEmailService : IEmailService
         {
             using var client = new SmtpClient
             {
-                Host = _options.Host,
-                Port = _options.Port,
-                EnableSsl = _options.EnableSsl,
+                Host = _options.Value.Host,
+                Port = _options.Value.Port,
+                EnableSsl = _options.Value.EnableSsl,
                 Credentials = new NetworkCredential(
-                    _options.Username,
-                    _options.Password)
+                    _options.Value.Username,
+                    _options.Value.Password)
             };
 
             using var mailMessage = new MailMessage

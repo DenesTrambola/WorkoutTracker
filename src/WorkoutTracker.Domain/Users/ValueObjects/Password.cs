@@ -18,7 +18,6 @@ public class Password : ValueObject
     public static Result<Password> Create(string plainPassword)
     {
         return EnsureNotEmpty(plainPassword).OnSuccess(() => Result.Combine(
-            EnsureNotEmpty(plainPassword),
             EnsureLength(plainPassword),
             EnsureContainsUppercase(plainPassword),
             EnsureContainsLowercase(plainPassword),

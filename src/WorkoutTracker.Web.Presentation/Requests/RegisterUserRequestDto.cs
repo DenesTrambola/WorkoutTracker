@@ -5,24 +5,30 @@ using System.ComponentModel.DataAnnotations;
 public sealed record RegisterUserRequestDto
 {
     [Required]
-    public string Username { get; init; } = null!;
+    public required string Username { get; init; } = null!;
+
 
     [Required]
-    public string Password { get; init; } = null!;
+    public required string Password { get; init; } = null!;
+
 
     [Required]
     [EmailAddress]
-    public string Email { get; init; } = null!;
+    public required string Email { get; init; } = null!;
+
 
     [Required]
-    public string FirstName { get; init; } = null!;
+    public required string FirstName { get; init; } = null!;
+
 
     [Required]
-    public string LastName { get; init; } = null!;
+    public required string LastName { get; init; } = null!;
+
 
     [Required]
-    public byte Gender { get; init; }
+    public required byte Gender { get; init; }
+
 
     [Required]
-    public DateOnly BirthDate { get; init; }
+    public required DateOnly BirthDate { get; init; }
 }
