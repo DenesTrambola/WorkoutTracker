@@ -2,20 +2,16 @@ namespace WorkoutTracker.Infrastructure;
 
 using System.Net;
 using System.Net.Mail;
+using Microsoft.Extensions.Options;
 using WorkoutTracker.Application.Shared.Models;
 using WorkoutTracker.Application.Shared.Primitives;
 using WorkoutTracker.Application.Users.Errors;
 using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Infrastructure.Models;
 
-public sealed class SmtpEmailService : IEmailService
+public sealed class SmtpEmailService(SmtpEmailOptions options) : IEmailService
 {
-    private readonly SmtpEmailSettings _options;
-
-    public SmtpEmailService(SmtpEmailSettings options)
-    {
-        _options = options;
-    }
+    private readonly SmtpEmailOptions _options = options;
 
     public async Task<Result> SendEmailAsync(
         EmailMessage message,

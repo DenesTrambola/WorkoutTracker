@@ -5,17 +5,17 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Domain", "src\WorkoutTracker.Domain\WorkoutTracker.Domain.csproj", "{02C4FA0D-90A6-45F7-A05D-0F73B8BC8F4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Domain", "WorkoutTracker.Domain\WorkoutTracker.Domain.csproj", "{02C4FA0D-90A6-45F7-A05D-0F73B8BC8F4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Application", "src\WorkoutTracker.Application\WorkoutTracker.Application.csproj", "{51EE856A-B81B-413B-8A8F-DA2F858E9049}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Application", "WorkoutTracker.Application\WorkoutTracker.Application.csproj", "{51EE856A-B81B-413B-8A8F-DA2F858E9049}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Persistence", "src\WorkoutTracker.Persistence\WorkoutTracker.Persistence.csproj", "{6518E56E-128C-4EE2-8A8F-62B19263A8FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Persistence", "WorkoutTracker.Persistence\WorkoutTracker.Persistence.csproj", "{6518E56E-128C-4EE2-8A8F-62B19263A8FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Infrastructure", "src\WorkoutTracker.Infrastructure\WorkoutTracker.Infrastructure.csproj", "{EA7E6C0C-AE05-43C7-B589-DA7CD916232F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Infrastructure", "WorkoutTracker.Infrastructure\WorkoutTracker.Infrastructure.csproj", "{EA7E6C0C-AE05-43C7-B589-DA7CD916232F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Web.Presentation", "src\WorkoutTracker.Web.Presentation\WorkoutTracker.Web.Presentation.csproj", "{60AA1D8B-2DA5-49E1-8B28-63CDAB2F4C66}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Web.Presentation", "WorkoutTracker.Web.Presentation\WorkoutTracker.Web.Presentation.csproj", "{60AA1D8B-2DA5-49E1-8B28-63CDAB2F4C66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Web.Host", "src\WorkoutTracker.Web.Host\WorkoutTracker.Web.Host.csproj", "{22A1A3FA-AD90-41FD-BB63-DCFC5C80DC74}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Web.Host", "WorkoutTracker.Web.Host\WorkoutTracker.Web.Host.csproj", "{22A1A3FA-AD90-41FD-BB63-DCFC5C80DC74}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject

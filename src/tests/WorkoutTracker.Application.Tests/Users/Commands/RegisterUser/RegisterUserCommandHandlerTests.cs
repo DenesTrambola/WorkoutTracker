@@ -38,12 +38,16 @@ public sealed class RegisterUserCommandHandlerTests
     public async Task Handle_Should_ReturnSuccess_When_UserIsRegistered()
     {
         // Arrange
-        RegisterUserCommand command = new(
-            _username,
-            _password,
-            _email,
-            _firstName, _lastName,
-            0, _birthDate);
+        var command = new RegisterUserCommand
+        {
+            Username = _username,
+            Password = _password,
+            Email = _email,
+            FirstName = _firstName,
+            LastName = _lastName,
+            Gender = 0,
+            BirthDate = _birthDate
+        };
 
         _passwordHasherMock.Setup(ph => ph.HashAsync(It.IsAny<Password>(), default))
             .ReturnsAsync(PasswordHash.Create(command.Password));
@@ -74,12 +78,16 @@ public sealed class RegisterUserCommandHandlerTests
     {
         // Arrange
         string username = new string('a', Username.MaxLength + 1);
-        RegisterUserCommand command = new(
-            username,
-            _password,
-            _email,
-            _firstName, _lastName,
-            0, _birthDate);
+        var command = new RegisterUserCommand
+        {
+            Username = username,
+            Password = _password,
+            Email = _email,
+            FirstName = _firstName,
+            LastName = _lastName,
+            Gender = 0,
+            BirthDate = _birthDate
+        };
 
         _passwordHasherMock.Setup(ph => ph.HashAsync(It.IsAny<Password>(), default))
             .ReturnsAsync(PasswordHash.Create(command.Password));
@@ -110,12 +118,16 @@ public sealed class RegisterUserCommandHandlerTests
     {
         // Arrange
         string password = new string('a', Password.MinLength - 1);
-        RegisterUserCommand command = new(
-            _username,
-            password,
-            _email,
-            _firstName, _lastName,
-            0, _birthDate);
+        var command = new RegisterUserCommand
+        {
+            Username = _username,
+            Password = password,
+            Email = _email,
+            FirstName = _firstName,
+            LastName = _lastName,
+            Gender = 0,
+            BirthDate = _birthDate
+        };
 
         _passwordHasherMock.Setup(ph => ph.HashAsync(It.IsAny<Password>(), default))
             .ReturnsAsync(PasswordHash.Create(command.Password));
@@ -146,12 +158,16 @@ public sealed class RegisterUserCommandHandlerTests
     {
         // Arrange
         string email = new string('a', Email.MaxLength + 1);
-        RegisterUserCommand command = new(
-            _username,
-            _password,
-            email,
-            _firstName, _lastName,
-            0, _birthDate);
+        var command = new RegisterUserCommand
+        {
+            Username = _username,
+            Password = _password,
+            Email = email,
+            FirstName = _firstName,
+            LastName = _lastName,
+            Gender = 0,
+            BirthDate = _birthDate
+        };
 
         _passwordHasherMock.Setup(ph => ph.HashAsync(It.IsAny<Password>(), default))
             .ReturnsAsync(PasswordHash.Create(command.Password));
@@ -183,12 +199,16 @@ public sealed class RegisterUserCommandHandlerTests
     {
         // Arrange
         string firstName = new string('a', FullName.MaxLength + 1);
-        RegisterUserCommand command = new(
-            _username,
-            _password,
-            _email,
-            firstName, _lastName,
-            0, _birthDate);
+        var command = new RegisterUserCommand
+        {
+            Username = _username,
+            Password = _password,
+            Email = _email,
+            FirstName = firstName,
+            LastName = _lastName,
+            Gender = 0,
+            BirthDate = _birthDate
+        };
 
         _passwordHasherMock.Setup(ph => ph.HashAsync(It.IsAny<Password>(), default))
             .ReturnsAsync(PasswordHash.Create(command.Password));
@@ -219,12 +239,16 @@ public sealed class RegisterUserCommandHandlerTests
     {
         // Arrange
         string lastName = new string('a', FullName.MaxLength + 1);
-        RegisterUserCommand command = new(
-            _username,
-            _password,
-            _email,
-            _firstName, lastName,
-            0, _birthDate);
+        var command = new RegisterUserCommand
+        {
+            Username = _username,
+            Password = _password,
+            Email = _email,
+            FirstName = _firstName,
+            LastName = lastName,
+            Gender = 0,
+            BirthDate = _birthDate
+        };
 
         _passwordHasherMock.Setup(ph => ph.HashAsync(It.IsAny<Password>(), default))
             .ReturnsAsync(PasswordHash.Create(command.Password));
@@ -254,12 +278,16 @@ public sealed class RegisterUserCommandHandlerTests
     public async Task Handle_Should_ReturnFailure_When_GenderIsInvalid()
     {
         // Arrange
-        RegisterUserCommand command = new(
-            _username,
-            _password,
-            _email,
-            _firstName, _lastName,
-            10, _birthDate);
+        var command = new RegisterUserCommand
+        {
+            Username = _username,
+            Password = _password,
+            Email = _email,
+            FirstName = _firstName,
+            LastName = _lastName,
+            Gender = 10,
+            BirthDate = _birthDate
+        };
 
         _passwordHasherMock.Setup(ph => ph.HashAsync(It.IsAny<Password>(), default))
             .ReturnsAsync(PasswordHash.Create(command.Password));
@@ -290,12 +318,16 @@ public sealed class RegisterUserCommandHandlerTests
     {
         // Arrange
         DateOnly birthDate = DateOnly.FromDateTime(DateTime.MaxValue);
-        RegisterUserCommand command = new(
-            _username,
-            _password,
-            _email,
-            _firstName, _lastName,
-            0, birthDate);
+        var command = new RegisterUserCommand
+        {
+            Username = _username,
+            Password = _password,
+            Email = _email,
+            FirstName = _firstName,
+            LastName = _lastName,
+            Gender = 0,
+            BirthDate = birthDate
+        };
 
         _passwordHasherMock.Setup(ph => ph.HashAsync(It.IsAny<Password>(), default))
             .ReturnsAsync(PasswordHash.Create(command.Password));
@@ -325,12 +357,16 @@ public sealed class RegisterUserCommandHandlerTests
     public async Task Handle_Should_ReturnFailure_When_PasswordHashingFails()
     {
         // Arrange
-        RegisterUserCommand command = new(
-            _username,
-            _password,
-            _email,
-            _firstName, _lastName,
-            0, _birthDate);
+        var command = new RegisterUserCommand
+        {
+            Username = _username,
+            Password = _password,
+            Email = _email,
+            FirstName = _firstName,
+            LastName = _lastName,
+            Gender = 0,
+            BirthDate = _birthDate
+        };
 
         _passwordHasherMock.Setup(ph => ph.HashAsync(It.IsAny<Password>(), default))
             .ReturnsAsync(Result.Failure<PasswordHash>(Domain.Users.Errors.DomainErrors.PasswordHash.Null));
@@ -360,12 +396,16 @@ public sealed class RegisterUserCommandHandlerTests
     public async Task Handle_Should_ReturnFailure_When_UsernameIsAlreadyExists()
     {
         // Arrange
-        RegisterUserCommand command = new(
-            _username,
-            _password,
-            _email,
-            _firstName, _lastName,
-            0, _birthDate);
+        var command = new RegisterUserCommand
+        {
+            Username = _username,
+            Password = _password,
+            Email = _email,
+            FirstName = _firstName,
+            LastName = _lastName,
+            Gender = 0,
+            BirthDate = _birthDate
+        };
 
         _passwordHasherMock.Setup(ph => ph.HashAsync(It.IsAny<Password>(), default))
             .ReturnsAsync(PasswordHash.Create(command.Password));
@@ -394,12 +434,16 @@ public sealed class RegisterUserCommandHandlerTests
     public async Task Handle_Should_ReturnFailure_When_EmailIsAlreadyExists()
     {
         // Arrange
-        RegisterUserCommand command = new(
-            _username,
-            _password,
-            _email,
-            _firstName, _lastName,
-            0, _birthDate);
+        var command = new RegisterUserCommand
+        {
+            Username = _username,
+            Password = _password,
+            Email = _email,
+            FirstName = _firstName,
+            LastName = _lastName,
+            Gender = 0,
+            BirthDate = _birthDate
+        };
 
         _passwordHasherMock.Setup(ph => ph.HashAsync(It.IsAny<Password>(), default))
             .ReturnsAsync(PasswordHash.Create(command.Password));
@@ -428,12 +472,16 @@ public sealed class RegisterUserCommandHandlerTests
     public async Task Handle_Should_ReturnFailure_When_AddingUserToDatabaseFails()
     {
         // Arrange
-        RegisterUserCommand command = new(
-            _username,
-            _password,
-            _email,
-            _firstName, _lastName,
-            0, _birthDate);
+        var command = new RegisterUserCommand
+        {
+            Username = _username,
+            Password = _password,
+            Email = _email,
+            FirstName = _firstName,
+            LastName = _lastName,
+            Gender = 0,
+            BirthDate = _birthDate
+        };
 
         _passwordHasherMock.Setup(ph => ph.HashAsync(It.IsAny<Password>(), default))
             .ReturnsAsync(PasswordHash.Create(command.Password));
@@ -458,12 +506,16 @@ public sealed class RegisterUserCommandHandlerTests
     public async Task Handle_Should_ReturnFailure_When_EmailSendingFails()
     {
         // Arrange
-        RegisterUserCommand command = new(
-            _username,
-            _password,
-            _email,
-            _firstName, _lastName,
-            0, _birthDate);
+        var command = new RegisterUserCommand
+        {
+            Username = _username,
+            Password = _password,
+            Email = _email,
+            FirstName = _firstName,
+            LastName = _lastName,
+            Gender = 0,
+            BirthDate = _birthDate
+        };
 
         _passwordHasherMock.Setup(ph => ph.HashAsync(It.IsAny<Password>(), default))
             .ReturnsAsync(PasswordHash.Create(command.Password));

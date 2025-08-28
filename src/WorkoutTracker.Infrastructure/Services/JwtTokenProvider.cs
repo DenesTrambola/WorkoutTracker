@@ -15,16 +15,16 @@ using WorkoutTracker.Domain.Users.TypedIds;
 using WorkoutTracker.Domain.Users.ValueObjects;
 using WorkoutTracker.Infrastructure.Models;
 
-public sealed class JwtTokenProvider(IOptions<JwtSettings> jwtSettings) : IAccessTokenProvider
+public sealed class JwtTokenProvider(JwtOptions options) : IAccessTokenProvider
 {
-    private readonly IOptions<JwtSettings> _jwtSettings = jwtSettings;
+    private readonly JwtOptions _options = options;
 
     public Result<AccessToken> GenerateToken(UserId userId, Email email, UserRole role)
     {
-        var secretKey = _jwtSettings.Value.SecretKey;
-        var expiryMinutes = _jwtSettings.Value.ExpiryMinutes;
-        var issuer = _jwtSettings.Value.Issuer;
-        var audience = _jwtSettings.Value.Audience;
+        var secretKey = _options.SecretKey;
+        var expiryMinutes = _options.ExpiryMinutes;
+        var issuer = _options.Issuer;
+        var audience = _options.Audience;
 
         try
         {
@@ -52,7 +52,11 @@ public sealed class JwtTokenProvider(IOptions<JwtSettings> jwtSettings) : IAcces
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return Result.Success(new AccessToken(tokenString, expires));
+            return Result.Success(new AccessToken
+            {
+                Token = tokenString,
+                ExpiresAt = expires
+            });
         }
         catch (Exception)
         {

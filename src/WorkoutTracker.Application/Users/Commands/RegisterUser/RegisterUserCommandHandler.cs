@@ -8,19 +8,22 @@ using WorkoutTracker.Application.Shared.Models;
 using WorkoutTracker.Application.Shared.Primitives;
 using WorkoutTracker.Application.Shared.Primitives.Messaging;
 using WorkoutTracker.Application.Users.Primitives;
+using WorkoutTracker.Domain.Shared.Primitives;
 using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Domain.Users.Enums;
 using WorkoutTracker.Domain.Users.ValueObjects;
 
 public sealed class RegisterUserCommandHandler(
-        IPasswordHasher passwordHasher,
         IUserRepository userRepository,
+        IUnitOfWork unitOfWork,
+        IPasswordHasher passwordHasher,
         IEmailService emailService)
     : ICommandHandler<RegisterUserCommand>
 {
-    private readonly IPasswordHasher _passwordHasher = passwordHasher;
     private readonly IUserRepository _userRepository = userRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IPasswordHasher _passwordHasher = passwordHasher;
     private readonly IEmailService _emailService = emailService;
 
     public async Task<Result> Handle(
@@ -42,7 +45,7 @@ public sealed class RegisterUserCommandHandler(
 
         var birthDate = request.BirthDate;
 
-        return await (await Result.Combine(
+        return (await (await Result.Combine(
             usernameResult,
             passwordHashResult,
             emailResult,
@@ -56,7 +59,8 @@ public sealed class RegisterUserCommandHandler(
                 UserRole.User,
                 birthDate))
             .OnSuccessAsync(async u => await _userRepository.AddAsync(u, cancellationToken)))
-            .OnSuccessAsync(async u => await SendRegistrationSuccessEmail(u));
+            .OnSuccessAsync(async u => await SendRegistrationSuccessEmail(u)))
+            .OnSuccess(() => _unitOfWork.SaveChangesAsync());
     }
 
     private async Task<Result<Username>> CreateAndValidateUsernameAsync(
@@ -85,14 +89,17 @@ public sealed class RegisterUserCommandHandler(
 
     private Task<Result> SendRegistrationSuccessEmail(User recipient)
     {
-       EmailMessage eMsg = new EmailMessage(
-           Email.Create("tramboladenes@gmail.com").ValueOrDefault(),
-           recipient.Email,
-           "WorkoutTracker: Registration was successful",
-           $"Hey {recipient.Username.Value}!\n\n" +
-           $"You have registered a new WorkoutTracker account, now you can use the web-app fully!\n" +
-           "We're glad you've chosen our application to manage your workout routines!\n\n" +
-           "Good luck with your progress and remember: NEVER skip leg day!");
+        var eMsg = new EmailMessage
+        {
+            From = Email.Create("tramboladenes@gmail.com").ValueOrDefault(),
+            To = recipient.Email,
+            Subject = "WorkoutTracker: Registration was successful",
+            Body =
+            $"Hey {recipient.Username.Value}!\n\n" +
+            $"You have registered a new WorkoutTracker account, now you can use the web-app fully!\n" +
+            "We're glad you've chosen our application to manage your workout routines!\n\n" +
+            "Good luck with your progress and remember: NEVER skip leg day!",
+        };
 
         return _emailService.SendEmailAsync(eMsg);
     }

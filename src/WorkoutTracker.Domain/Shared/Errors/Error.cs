@@ -3,16 +3,16 @@ namespace WorkoutTracker.Domain.Shared.Errors;
 public class Error : IEquatable<Error>
 {
     public string Code { get; }
-    public string Message { get; }
+    public string Description { get; }
 
-    public Error(string code, string message)
+    public Error(string code, string description)
     {
         Code = code;
-        Message = message;
+        Description = description;
     }
 
     public bool Equals(Error? other)
-        => other is not null && Code == other.Code && Message == other.Message;
+        => other is not null && Code == other.Code && Description == other.Description;
 
     public static bool operator ==(Error? left, Error? right)
         => left is not null && left.Equals(right);
@@ -24,8 +24,8 @@ public class Error : IEquatable<Error>
         => Equals(obj as Error);
 
     public override int GetHashCode()
-        => HashCode.Combine(Code, Message);
+        => HashCode.Combine(Code, Description);
 
     public override string ToString()
-        => $"{Code}: {Message}";
+        => $"{Code}: {Description}";
 }

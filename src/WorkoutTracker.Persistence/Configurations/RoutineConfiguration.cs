@@ -56,6 +56,6 @@ public sealed class RoutineConfiguration : IEntityTypeConfiguration<Routine>
         builder.HasOne<User>()
             .WithMany()
             .HasForeignKey(r => r.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.ClientCascade);
     }
 }

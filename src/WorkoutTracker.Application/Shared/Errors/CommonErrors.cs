@@ -21,6 +21,6 @@ public static partial class ApplicationErrors
 
     internal static Error Taken(string name)
         => new Error(
-            $"{name}.AlreadyInUse",
+            $"{name}.Taken",
             $"The specified {name} is already in use.");
 }

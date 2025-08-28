@@ -89,8 +89,7 @@ namespace WorkoutTracker.Persistence.Migrations
                         name: "FK_Routines_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(

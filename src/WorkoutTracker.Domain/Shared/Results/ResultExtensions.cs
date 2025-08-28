@@ -138,6 +138,20 @@ public static class ResultExtensions
         return result;
     }
 
+    public static void Match(
+        [NotNull] this Result result,
+        [NotNull] Action onSuccess,
+        [NotNull] Action<Error[]> onFailure)
+    {
+        if (result.IsFailure)
+        {
+            onFailure(result.Errors);
+            return;
+        }
+
+        onSuccess();
+    }
+
     public static void Match<TValue>(
         [NotNull] this Result<TValue> result,
         [NotNull] Action<TValue> onSuccess,

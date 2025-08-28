@@ -12,7 +12,7 @@ using WorkoutTracker.Persistence;
 namespace WorkoutTracker.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250822092044_InitialCreate")]
+    [Migration("20250826124210_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -317,7 +317,7 @@ namespace WorkoutTracker.Persistence.Migrations
                     b.HasOne("WorkoutTracker.Domain.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 

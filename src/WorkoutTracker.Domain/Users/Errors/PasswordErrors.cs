@@ -22,11 +22,11 @@ public static partial class DomainErrors
             $"{nameof(Password)} is missing lowercase characters.");
 
         public static readonly Error MissingDigit = new Error(
-            $"{nameof(Password)}.MissingLowercase",
+            $"{nameof(Password)}.MissingDigit",
             $"{nameof(Password)} is missing digit characters.");
 
         public static readonly Error MissingSpecial = new Error(
-            $"{nameof(Password)}.MissingLowercase",
+            $"{nameof(Password)}.MissingSpecial",
             $"{nameof(Password)} is missing special characters.");
     }
 }

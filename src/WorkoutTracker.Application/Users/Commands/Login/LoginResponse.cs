@@ -5,4 +5,4 @@ public sealed record LoginResponse(
     string Username,
     string Email,
     string Token,
-    DateTime ExpiredAt);
+    DateTime ExpiresAt);
