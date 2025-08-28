@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\WorkoutTracker.Infrastructure\WorkoutTracker.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\WorkoutTracker.Infrastructure\WorkoutTracker.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

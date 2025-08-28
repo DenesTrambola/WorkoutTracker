@@ -9,9 +9,9 @@ using WorkoutTracker.Application.Users.Errors;
 using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Infrastructure.Models;
 
-public sealed class SmtpEmailService(IOptions<SmtpEmailOptions> options) : IEmailService
+public sealed class SmtpEmailService(SmtpEmailOptions options) : IEmailService
 {
-    private readonly IOptions<SmtpEmailOptions> _options = options;
+    private readonly SmtpEmailOptions _options = options;
 
     public async Task<Result> SendEmailAsync(
         EmailMessage message,
@@ -21,12 +21,12 @@ public sealed class SmtpEmailService(IOptions<SmtpEmailOptions> options) : IEmai
         {
             using var client = new SmtpClient
             {
-                Host = _options.Value.Host,
-                Port = _options.Value.Port,
-                EnableSsl = _options.Value.EnableSsl,
+                Host = _options.Host,
+                Port = _options.Port,
+                EnableSsl = _options.EnableSsl,
                 Credentials = new NetworkCredential(
-                    _options.Value.Username,
-                    _options.Value.Password)
+                    _options.Username,
+                    _options.Password)
             };
 
             using var mailMessage = new MailMessage

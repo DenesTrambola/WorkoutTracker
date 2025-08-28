@@ -30,7 +30,9 @@ internal static class DependencyInjection
 
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        ConfigurationManager configurationManager,
+        string environmentName)
     {
         services.Scan(selector => selector
         .FromAssemblies(InfrastructureAssemblyReference.Assembly)
@@ -39,10 +41,13 @@ internal static class DependencyInjection
         .AsMatchingInterface()
         .WithScopedLifetime());
 
-        services.AddOptions<SmtpEmailOptions>()
-            .Bind(configuration.GetSection("Smtp"))
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
+        configurationManager
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables();
+
+        var smtpOptions = configuration.GetSection("Smtp").Get<SmtpEmailOptions>()!;
+        services.AddSingleton(smtpOptions);
 
         services.AddScoped<IAccessTokenProvider, JwtTokenProvider>();
         services.AddScoped<IEmailService, SmtpEmailService>();
@@ -62,17 +67,16 @@ internal static class DependencyInjection
         .AsMatchingInterface()
         .WithScopedLifetime());
 
-        services.AddDbContext<AppDbContext>(optionsBuilder =>
-        {
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("Database"));
-        });
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("Database")));
 
         return services;
     }
 
     public static IServiceCollection AddPresentation(
         this IServiceCollection services,
-        ConfigureHostBuilder host)
+        ConfigureHostBuilder host,
+        ConfigureWebHostBuilder webHost)
     {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
@@ -86,6 +90,10 @@ internal static class DependencyInjection
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+        webHost.ConfigureKestrel(options =>
+        {
+            options.ListenAnyIP(1344);
+        });
 
         return services;
     }
@@ -94,28 +102,28 @@ internal static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddOptions<JwtOptions>()
-            .Bind(configuration.GetSection("Jwt"))
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
         var jwtSettings = configuration.GetSection("Jwt").Get<JwtOptions>()!;
+        services.AddSingleton(jwtSettings);
 
-        services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = "JwtBearer";
+            options.DefaultChallengeScheme = "JwtBearer";
+        })
+        .AddJwtBearer("JwtBearer", options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
             {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings.Issuer,
-                    ValidAudience = jwtSettings.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
-                };
-            });
+                ValidIssuer = jwtSettings.Issuer,
+                ValidAudience = jwtSettings.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true
+            };
+        });
 
         services.AddAuthorization();
 
