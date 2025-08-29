@@ -1,4 +1,4 @@
-namespace WorkoutTracker.Application.Measurements.Commands;
+namespace WorkoutTracker.Application.Measurements.Commands.CreateMeasurement;
 
 using System;
 using System.Threading;
