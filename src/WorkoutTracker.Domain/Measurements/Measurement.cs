@@ -66,7 +66,7 @@ public class Measurement : AggregateRoot<MeasurementId>
     {
         return Result.Ensure(
             unit,
-            u => Enum.IsDefined<MeasurementUnit>(u),
+            u => Enum.IsDefined(u),
             DomainErrors.MeasurementUnit.Invalid);
     }
 

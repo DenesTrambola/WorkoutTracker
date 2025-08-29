@@ -8,16 +8,18 @@ using WorkoutTracker.Application.Users.Commands.RegisterUser;
 using WorkoutTracker.Application.Users.Errors;
 using WorkoutTracker.Application.Users.Primitives;
 using WorkoutTracker.Domain.Shared.Errors;
+using WorkoutTracker.Domain.Shared.Primitives;
 using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Domain.Users.ValueObjects;
 
 public sealed class RegisterUserCommandHandlerTests
 {
-    private readonly Mock<IPasswordHasher> _passwordHasherMock = new();
-    private readonly Mock<IUserRepository> _userRepositoryMock = new();
-    private readonly Mock<IEmailService> _emailServiceMock = new();
     private readonly RegisterUserCommandHandler _sut; // System Under Test
+    private readonly Mock<IUserRepository> _userRepositoryMock = new();
+    private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
+    private readonly Mock<IPasswordHasher> _passwordHasherMock = new();
+    private readonly Mock<IEmailService> _emailServiceMock = new();
 
     private readonly string _username = "denestrambola";
     private readonly string _password = "Pa$$word123";
@@ -29,8 +31,9 @@ public sealed class RegisterUserCommandHandlerTests
     public RegisterUserCommandHandlerTests()
     {
         _sut = new RegisterUserCommandHandler(
-            _passwordHasherMock.Object,
             _userRepositoryMock.Object,
+            _unitOfWorkMock.Object,
+            _passwordHasherMock.Object,
             _emailServiceMock.Object);
     }
 

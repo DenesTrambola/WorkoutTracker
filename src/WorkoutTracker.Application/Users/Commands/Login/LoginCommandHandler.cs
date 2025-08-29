@@ -55,12 +55,14 @@ public sealed class LoginCommandHandler : ICommandHandler<LoginCommand, LoginRes
         {
             var user = userResult.ValueOrDefault();
             
-            return new LoginResponse(
-                user.Id.IdValue,
-                user.Username.Value,
-                user.Email.Value,
-                t.Token,
-                t.ExpiresAt);
+            return new LoginResponse
+            {
+                UserId = user.Id.IdValue,
+                Username = user.Username.Value,
+                Email = user.Email.Value,
+                Token = t.Token,
+                ExpiresAt = t.ExpiresAt
+            };
             });
     }
 

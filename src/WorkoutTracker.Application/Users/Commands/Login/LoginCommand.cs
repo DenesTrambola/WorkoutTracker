@@ -5,6 +5,7 @@ using WorkoutTracker.Application.Shared.Primitives.Messaging;
 public sealed record LoginCommand
     : ICommand<LoginResponse>
 {
-    public string Username { get; init; } = null!;
-    public string Password { get; init; } = null!;
+    public required string Username { get; init; }
+
+    public required string Password { get; init; }
 }
