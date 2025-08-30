@@ -32,7 +32,7 @@ public sealed class UserRepository : IUserRepository
         }
     }
 
-    public async Task<Result> RemoveAsync(UserId id, CancellationToken cancellationToken = default)
+    public async Task<Result> DeleteAsync(UserId id, CancellationToken cancellationToken = default)
     {
         var userResult = await GetByIdAsync(id, cancellationToken);
 

@@ -60,7 +60,7 @@ public sealed class MeasurementRepository(AppDbContext dbContext) : IMeasurement
             ApplicationErrors.Measurement.NotFound)!;
     }
 
-    public async Task<Result> RemoveAsync(
+    public async Task<Result> DeleteAsync(
         MeasurementId id,
         CancellationToken cancellationToken = default)
     {

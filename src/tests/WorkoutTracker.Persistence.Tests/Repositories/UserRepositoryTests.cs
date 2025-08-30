@@ -72,7 +72,7 @@ public sealed class UserRepositoryTests
         var saveResult = await unitOfWork.SaveChangesAsync();
 
         var removeResult = await addResult.OnSuccessAsync(
-            async u => await unitOfWork.Users.RemoveAsync(user.Id));
+            async u => await unitOfWork.Users.DeleteAsync(user.Id));
         saveResult = await unitOfWork.SaveChangesAsync();
 
         // Assert
