@@ -6,20 +6,16 @@ using WorkoutTracker.Application.Users.Commands.Login;
 using WorkoutTracker.Application.Users.Commands.RegisterUser;
 using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Web.Presentation.Primitives;
-using WorkoutTracker.Web.Presentation.Requests;
+using WorkoutTracker.Web.Presentation.Requests.Users;
 
 [Route("api/auth")]
-public sealed class AuthControllers : ApiController
+public sealed class AuthController(ISender sender)
+    : ApiController(sender)
 {
-    public AuthControllers(ISender sender)
-        : base(sender)
-    {
-    }
-
     [HttpPost("register")]
     public async Task<IActionResult> Register(
         [FromBody] RegisterUserRequestDto request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var command = new RegisterUserCommand
         {

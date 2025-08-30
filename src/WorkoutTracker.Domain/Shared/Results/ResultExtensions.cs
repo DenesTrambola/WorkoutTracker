@@ -101,7 +101,7 @@ public static class ResultExtensions
             : Result.Failure(result.Errors);
     }
 
-    public static async Task<Result> OnSuccessAsync(
+    public async static Task<Result> OnSuccessAsync(
         [NotNull] this Result result,
         [NotNull] Func<Task<Result>> callback)
     {
@@ -110,7 +110,7 @@ public static class ResultExtensions
             : Result.Failure(result.Errors);
     }
 
-    public static async Task<Result<TValue>> OnSuccessAsync<TValue>(
+    public async static Task<Result<TValue>> OnSuccessAsync<TValue>(
         [NotNull] this Result result,
         [NotNull] Func<Task<Result<TValue>>> callback)
     {
@@ -119,7 +119,7 @@ public static class ResultExtensions
             : Result.Failure<TValue>(result.Errors);
     }
 
-    public static async Task<Result<TValue>> OnSuccessAsync<TValue>(
+    public async static Task<Result<TValue>> OnSuccessAsync<TValue>(
         [NotNull] this Result<TValue> result,
         [NotNull] Func<TValue, Task<Result<TValue>>> callback)
     {

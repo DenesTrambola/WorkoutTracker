@@ -66,7 +66,7 @@ public class Measurement : AggregateRoot<MeasurementId>
     {
         return Result.Ensure(
             unit,
-            u => Enum.IsDefined<MeasurementUnit>(u),
+            u => Enum.IsDefined(u),
             DomainErrors.MeasurementUnit.Invalid);
     }
 
@@ -99,6 +99,17 @@ public class Measurement : AggregateRoot<MeasurementId>
             {
                 if (Unit != u)
                     Unit = u;
+            })
+            .Map(_ => this);
+    }
+
+    public Result<Measurement> ReassignToUser(UserId newUserId)
+    {
+        return UserId.EnsureNotNull(newUserId)
+            .OnSuccess(u =>
+            {
+                if (UserId != u)
+                    UserId = u;
             })
             .Map(_ => this);
     }

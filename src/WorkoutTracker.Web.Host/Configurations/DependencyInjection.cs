@@ -2,16 +2,20 @@ namespace WorkoutTracker.Web.Host.Configurations;
 
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 using Scrutor;
 using Serilog;
 using WorkoutTracker.Application;
 using WorkoutTracker.Application.Shared.Primitives;
 using WorkoutTracker.Application.Users.Primitives;
+using WorkoutTracker.Domain.Measurements.Enums;
 using WorkoutTracker.Infrastructure;
 using WorkoutTracker.Infrastructure.Models;
 using WorkoutTracker.Infrastructure.Services;
@@ -86,14 +90,32 @@ internal static class DependencyInjection
 
         services
             .AddControllers()
-            .AddApplicationPart(WebPresentationAssemblyReference.Assembly);
+            .AddApplicationPart(WebPresentationAssemblyReference.Assembly)
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
 
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
+            c.MapType<MeasurementUnit>(() =>
+                new OpenApiSchema
+                {
+                    Type = "string",
+                    Enum = Enum.GetNames<MeasurementUnit>()
+                        .Select(name => new OpenApiString(name))
+                        .Cast<IOpenApiAny>()
+                        .ToList()
+                });
+        });
+
         webHost.ConfigureKestrel(options =>
         {
             options.ListenAnyIP(1344);
         });
+
+        services.AddEndpointsApiExplorer();
 
         return services;
     }
