@@ -1,4 +1,4 @@
-namespace WorkoutTracker.Web.Presentation.Requests;
+namespace WorkoutTracker.Web.Presentation.Requests.Measurements;
 
 using System.ComponentModel.DataAnnotations;
 

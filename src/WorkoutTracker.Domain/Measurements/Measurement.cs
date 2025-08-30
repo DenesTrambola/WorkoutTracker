@@ -103,6 +103,17 @@ public class Measurement : AggregateRoot<MeasurementId>
             .Map(_ => this);
     }
 
+    public Result<Measurement> ReassignToUser(UserId newUserId)
+    {
+        return UserId.EnsureNotNull(newUserId)
+            .OnSuccess(u =>
+            {
+                if (UserId != u)
+                    UserId = u;
+            })
+            .Map(_ => this);
+    }
+
     public Result<MeasurementData> AddData(
         MeasurementDataValue value,
         DateTime measuredOn,

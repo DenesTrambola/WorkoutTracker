@@ -6,7 +6,7 @@ using WorkoutTracker.Application.Users.Commands.Login;
 using WorkoutTracker.Application.Users.Commands.RegisterUser;
 using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Web.Presentation.Primitives;
-using WorkoutTracker.Web.Presentation.Requests;
+using WorkoutTracker.Web.Presentation.Requests.Users;
 
 [Route("api/auth")]
 public sealed class AuthController(ISender sender)
