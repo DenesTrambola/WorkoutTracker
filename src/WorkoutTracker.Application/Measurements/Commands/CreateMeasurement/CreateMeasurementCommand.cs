@@ -9,7 +9,7 @@ public sealed record CreateMeasurementCommand
 
     public required string Description { get; init; }
 
-    public required byte Unit { get; init; }
+    public required string Unit { get; init; }
 
     public required Guid UserId { get; init; }
 }

@@ -6,21 +6,19 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.Application.Measurements.Errors;
 using WorkoutTracker.Domain.Measurements;
+using WorkoutTracker.Domain.Measurements.Enums;
 using WorkoutTracker.Domain.Measurements.TypedIds;
 using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Domain.Shared.ValueObjects;
 using WorkoutTracker.Domain.Users.TypedIds;
 
-public sealed class MeasurementRepository : IMeasurementRepository
+public sealed class MeasurementRepository(AppDbContext dbContext) : IMeasurementRepository
 {
-    private readonly AppDbContext _dbContext;
+    private readonly AppDbContext _dbContext = dbContext;
 
-    public MeasurementRepository(AppDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
-    public async Task<Result<Measurement>> AddAsync(Measurement entity, CancellationToken cancellationToken = default)
+    public async Task<Result<Measurement>> AddAsync(
+        Measurement entity,
+        CancellationToken cancellationToken = default)
     {
         try
         {
@@ -33,13 +31,28 @@ public sealed class MeasurementRepository : IMeasurementRepository
         }
     }
 
-    public async Task<Result<IEnumerable<Measurement>>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<Result<IEnumerable<Measurement>>> GetAllAsync(
+        CancellationToken cancellationToken = default)
     {
         var measurements = await _dbContext.Measurements.ToListAsync(cancellationToken);
+
         return Result.Success(measurements.AsEnumerable());
     }
 
-    public async Task<Result<Measurement>> GetByIdAsync(MeasurementId id, CancellationToken cancellationToken = default)
+    public async Task<Result<IEnumerable<Measurement>>> GetAllByUserAsync(
+        UserId userId, CancellationToken
+        cancellationToken = default)
+    {
+        var measurements = await _dbContext.Measurements
+            .Where(m => m.UserId == userId)
+            .ToListAsync(cancellationToken);
+
+        return Result.Success(measurements.AsEnumerable());
+    }
+
+    public async Task<Result<Measurement>> GetByIdAsync(
+        MeasurementId id,
+        CancellationToken cancellationToken = default)
     {
         return Result.Ensure(
             await _dbContext.Measurements.FirstOrDefaultAsync(m => m.Id == id, cancellationToken),
@@ -47,7 +60,9 @@ public sealed class MeasurementRepository : IMeasurementRepository
             ApplicationErrors.Measurement.NotFound)!;
     }
 
-    public async Task<Result> RemoveAsync(MeasurementId id, CancellationToken cancellationToken = default)
+    public async Task<Result> RemoveAsync(
+        MeasurementId id,
+        CancellationToken cancellationToken = default)
     {
         var measurementResult = await GetByIdAsync(id, cancellationToken);
 
@@ -65,7 +80,10 @@ public sealed class MeasurementRepository : IMeasurementRepository
         }
     }
 
-    public async Task<Result<Name>> ValidateNameUniqueness(Name name, UserId userId, CancellationToken cancellationToken = default)
+    public async Task<Result<Name>> ValidateNameUniqueness(
+        Name name,
+        UserId userId,
+        CancellationToken cancellationToken = default)
     {
         return Result.Ensure(
             !(await _dbContext.Measurements.AnyAsync(
@@ -74,4 +92,3 @@ public sealed class MeasurementRepository : IMeasurementRepository
             .OnSuccess(() => name);
     }
 }
-

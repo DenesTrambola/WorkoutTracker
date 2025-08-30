@@ -10,7 +10,7 @@ public sealed record CreateMeasurementDto
     public required string Description { get; init; }
 
     [Required]
-    public required byte Unit { get; init; }
+    public required string Unit { get; init; }
 
     [Required]
     public required Guid UserId { get; init; }

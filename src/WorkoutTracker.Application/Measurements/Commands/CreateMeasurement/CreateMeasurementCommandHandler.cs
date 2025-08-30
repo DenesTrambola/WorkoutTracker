@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WorkoutTracker.Application.Shared.Primitives.Messaging;
 using WorkoutTracker.Domain.Measurements;
 using WorkoutTracker.Domain.Measurements.Enums;
+using WorkoutTracker.Domain.Measurements.Errors;
 using WorkoutTracker.Domain.Shared.Primitives;
 using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Domain.Shared.ValueObjects;
@@ -33,11 +34,14 @@ public sealed class CreateMeasurementCommandHandler(
 
         var descriptionResult = Description.Create(request.Description);
 
-        var unit = (MeasurementUnit)request.Unit;
+        var unitResult = Enum.TryParse<MeasurementUnit>(request.Unit, out var unit)
+            ? Result.Success(unit)
+            : Result.Failure<MeasurementUnit>(DomainErrors.MeasurementUnit.Invalid);
 
         var measurementResult = await Result.Combine(
             nameResult,
-            descriptionResult)
+            descriptionResult,
+            unitResult)
             .OnSuccess(() => Measurement.Create(
                 nameResult.ValueOrDefault(),
                 descriptionResult.ValueOrDefault(),

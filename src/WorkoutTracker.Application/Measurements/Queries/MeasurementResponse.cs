@@ -8,7 +8,7 @@ public sealed record MeasurementResponse
 
     public required string Description { get; init; }
 
-    public required byte Unit { get; init; }
+    public required string Unit { get; init; }
 
     public required Guid UserId { get; init; }
 }
