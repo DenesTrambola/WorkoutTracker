@@ -3,7 +3,8 @@ namespace WorkoutTracker.Web.Presentation.Controllers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Application.Measurements.Commands.CreateMeasurement;
-using WorkoutTracker.Application.Measurements.Queries.GetAllMeasurements;
+using WorkoutTracker.Application.Measurements.Queries.GetAll;
+using WorkoutTracker.Application.Measurements.Queries.GetById;
 using WorkoutTracker.Web.Presentation.Primitives;
 using WorkoutTracker.Web.Presentation.Requests;
 
@@ -47,6 +48,24 @@ public sealed class MeasurementController(ISender sender)
             : BadRequest(new
             {
                 Message = "Failed to retrieve measurements",
+                Errors = result.Errors
+            });
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetMeasurementByIdQuery(id);
+
+        var result = await Sender.Send(query, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.ValueOrDefault()) 
+            : BadRequest(new
+            {
+                Message = "Failed to retrieve measurement",
                 Errors = result.Errors
             });
     }

@@ -1,4 +1,4 @@
-namespace WorkoutTracker.Application.Measurements.Queries.GetAllMeasurements;
+namespace WorkoutTracker.Application.Measurements.Queries.GetAll;
 
 using WorkoutTracker.Application.Shared.Primitives.Messaging;
 using WorkoutTracker.Domain.Measurements.Enums;

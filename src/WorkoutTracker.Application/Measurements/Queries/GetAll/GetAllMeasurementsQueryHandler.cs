@@ -1,4 +1,4 @@
-namespace WorkoutTracker.Application.Measurements.Queries.GetAllMeasurements;
+namespace WorkoutTracker.Application.Measurements.Queries.GetAll;
 
 using System.Threading;
 using System.Threading.Tasks;
