@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Application.Exercises.Commands.Create;
 using WorkoutTracker.Application.Exercises.Queries.GetAll;
+using WorkoutTracker.Application.Exercises.Queries.GetById;
 using WorkoutTracker.Web.Presentation.Primitives;
 using WorkoutTracker.Web.Presentation.Requests.Exercises;
 
@@ -49,5 +50,23 @@ public sealed class ExerciseController(ISender sender)
                  Message = "Failed to retrieve exercises",
                  Errors = result.Errors
              });
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetExerciseByIdQuery(id);
+
+        var result = await Sender.Send(query, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.ValueOrDefault())
+            : BadRequest(new
+            {
+                Message = "Failed to retrieve measurement",
+                Errors = result.Errors
+            });
     }
 }
