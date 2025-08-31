@@ -33,7 +33,7 @@ public sealed class MeasurementController(ISender sender)
             ? CreatedAtAction(nameof(Create), null) 
             : BadRequest(new
             {
-                Message = "Measurement creation failed",
+                Message = "Failed to create measurement",
                 Errors = result.Errors
             });
     }

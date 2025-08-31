@@ -19,6 +19,11 @@ public static partial class ApplicationErrors
             $"{name}.CannotDeleteFromDatabase",
             $"An error occured while deleting {name} from the database.");
 
+    internal static Error CannotUpdateInDatabase(string name)
+        => new Error(
+            $"{name}.CannotUpdateInDatabase",
+            $"An error occured while updating {name} in the database.");
+
     internal static Error Taken(string name)
         => new Error(
             $"{name}.Taken",

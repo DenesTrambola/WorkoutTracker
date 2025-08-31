@@ -14,6 +14,10 @@ public static partial class ApplicationErrors
             = Shared.Errors.ApplicationErrors.CannotDeleteFromDatabase(
             nameof(Exercise));
 
+        public static readonly Error CannotUpdateInDatabase
+            = Shared.Errors.ApplicationErrors.CannotUpdateInDatabase(
+            nameof(Exercise));
+
         public static readonly Error NotFound = Shared.Errors.ApplicationErrors.NotFound(
             nameof(Exercise));
     }
