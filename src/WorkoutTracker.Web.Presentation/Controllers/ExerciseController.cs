@@ -30,12 +30,12 @@ public sealed class ExerciseController(ISender sender)
         var result = await Sender.Send(command, cancellationToken);
 
         return result.IsSuccess
-             ? CreatedAtAction(nameof(Create), null)
-             : BadRequest(new
-             {
-                 Message = "Failed to create exercise",
-                 Errors = result.Errors
-             });
+            ? CreatedAtAction(nameof(Create), null)
+            : BadRequest(new
+            {
+                Message = "Failed to create exercise",
+                Errors = result.Errors
+            });
     }
 
     [HttpGet]
@@ -46,12 +46,12 @@ public sealed class ExerciseController(ISender sender)
         var result = await Sender.Send(query, cancellationToken);
 
         return result.IsSuccess
-             ? Ok(result.ValueOrDefault())
-             : BadRequest(new
-             {
-                 Message = "Failed to retrieve exercises",
-                 Errors = result.Errors
-             });
+            ? Ok(result.ValueOrDefault())
+            : BadRequest(new
+            {
+                Message = "Failed to retrieve exercises",
+                Errors = result.Errors
+            });
     }
 
     [HttpGet("{id:guid}")]
@@ -90,12 +90,12 @@ public sealed class ExerciseController(ISender sender)
         var result = await Sender.Send(command, cancellationToken);
 
         return result.IsSuccess
-             ? Ok(result.ValueOrDefault())
-             : BadRequest(new
-             {
-                 Message = "Failed to modify exercise",
-                 Error = result.Errors
-             });
+            ? Ok(result.ValueOrDefault())
+            : BadRequest(new
+            {
+                Message = "Failed to modify exercise",
+                Error = result.Errors
+            });
     }
 
     [HttpDelete("{id:guid}")]
@@ -108,11 +108,11 @@ public sealed class ExerciseController(ISender sender)
         var result = await Sender.Send(command, cancellationToken);
 
         return result.IsSuccess
-              ? Ok()
-              : BadRequest(new
-              {
-                  Message = "Failed to delete exercise",
-                  Error = result.Errors
-              });
+            ? Ok()
+            : BadRequest(new
+            {
+                Message = "Failed to delete exercise",
+                Error = result.Errors
+            });
     }
 }
