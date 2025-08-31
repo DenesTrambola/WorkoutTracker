@@ -106,10 +106,10 @@ public class Measurement : AggregateRoot<MeasurementId>
     public Result<Measurement> ReassignToUser(UserId newUserId)
     {
         return UserId.EnsureNotNull(newUserId)
-            .OnSuccess(u =>
+            .OnSuccess(uId =>
             {
-                if (UserId != u)
-                    UserId = u;
+                if (UserId != uId)
+                    UserId = uId;
             })
             .Map(_ => this);
     }

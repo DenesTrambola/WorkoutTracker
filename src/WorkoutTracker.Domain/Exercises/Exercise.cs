@@ -1,5 +1,6 @@
 namespace WorkoutTracker.Domain.Exercises;
 
+using System;
 using WorkoutTracker.Domain.Exercises.Errors;
 using WorkoutTracker.Domain.Exercises.TypedIds;
 using WorkoutTracker.Domain.Exercises.ValueObjects;
@@ -88,6 +89,17 @@ public class Exercise : AggregateRoot<ExerciseId>
             {
                 if (Visibility != v)
                     Visibility = v;
+            })
+            .Map(_ => this);
+    }
+
+    public Result<Exercise> ReassignToUser(UserId userId)
+    {
+        return UserId.EnsureNotNull(userId)
+            .OnSuccess(uId =>
+            {
+                if (UserId != uId)
+                    UserId = uId;
             })
             .Map(_ => this);
     }

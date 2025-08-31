@@ -12,7 +12,9 @@ using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Domain.Shared.ValueObjects;
 using WorkoutTracker.Domain.Users.TypedIds;
 
-public sealed class MeasurementRepository(AppDbContext dbContext) : IMeasurementRepository
+public sealed class MeasurementRepository(
+    AppDbContext dbContext)
+    : IMeasurementRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
 
@@ -28,6 +30,26 @@ public sealed class MeasurementRepository(AppDbContext dbContext) : IMeasurement
         catch (Exception)
         {
             return Result.Failure<Measurement>(ApplicationErrors.Measurement.CannotAddToDatabase);
+        }
+    }
+
+    public async Task<Result> DeleteAsync(
+        MeasurementId id,
+        CancellationToken cancellationToken = default)
+    {
+        var measurementResult = await GetByIdAsync(id, cancellationToken);
+
+        if (measurementResult.IsFailure)
+            return Result.Failure(measurementResult.Errors);
+
+        try
+        {
+            _dbContext.Measurements.Remove(measurementResult.ValueOrDefault()!);
+            return Result.Success();
+        }
+        catch (Exception)
+        {
+            return Result.Failure(ApplicationErrors.Measurement.CannotDeleteFromDatabase);
         }
     }
 
@@ -58,26 +80,6 @@ public sealed class MeasurementRepository(AppDbContext dbContext) : IMeasurement
             await _dbContext.Measurements.FirstOrDefaultAsync(m => m.Id == id, cancellationToken),
             m => m is not null,
             ApplicationErrors.Measurement.NotFound)!;
-    }
-
-    public async Task<Result> DeleteAsync(
-        MeasurementId id,
-        CancellationToken cancellationToken = default)
-    {
-        var measurementResult = await GetByIdAsync(id, cancellationToken);
-
-        if (measurementResult.IsFailure)
-            return Result.Failure(measurementResult.Errors);
-
-        try
-        {
-            _dbContext.Measurements.Remove(measurementResult.ValueOrDefault()!);
-            return Result.Success();
-        }
-        catch (Exception)
-        {
-            return Result.Failure(ApplicationErrors.Measurement.CannotDeleteFromDatabase);
-        }
     }
 
     public async Task<Result<Name>> ValidateNameUniqueness(

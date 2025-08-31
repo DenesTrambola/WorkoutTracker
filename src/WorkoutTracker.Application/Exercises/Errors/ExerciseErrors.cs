@@ -1,24 +1,24 @@
-namespace WorkoutTracker.Application.Measurements.Errors;
+namespace WorkoutTracker.Application.Exercises.Errors;
 
 using WorkoutTracker.Domain.Shared.Errors;
 
 public static partial class ApplicationErrors
 {
-    public static class Measurement
+    public static class Exercise
     {
         public static readonly Error CannotAddToDatabase
             = Shared.Errors.ApplicationErrors.CannotAddToDatabase(
-            nameof(Measurement));
+            nameof(Exercise));
 
         public static readonly Error CannotDeleteFromDatabase
             = Shared.Errors.ApplicationErrors.CannotDeleteFromDatabase(
-            nameof(Measurement));
+            nameof(Exercise));
 
         public static readonly Error CannotUpdateInDatabase
             = Shared.Errors.ApplicationErrors.CannotUpdateInDatabase(
-            nameof(Measurement));
+            nameof(Exercise));
 
         public static readonly Error NotFound = Shared.Errors.ApplicationErrors.NotFound(
-            nameof(Measurement));
+            nameof(Exercise));
     }
 }

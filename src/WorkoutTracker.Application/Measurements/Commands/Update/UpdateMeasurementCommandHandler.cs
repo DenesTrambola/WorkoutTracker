@@ -4,6 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using WorkoutTracker.Application.Measurements.Errors;
 using WorkoutTracker.Application.Measurements.Queries;
 using WorkoutTracker.Application.Shared.Primitives.Messaging;
 using WorkoutTracker.Domain.Measurements;
@@ -33,21 +34,24 @@ public sealed class UpdateMeasurementCommandHandler(
         var measurementResult = (await TryGetMeasurementByIdAsync(request.Id, cancellationToken))
             .Map(m =>
             {
-                Result<Measurement> updateResult = m;
-
-                if (request.Name is not null)
-                    updateResult = TryUpdateName(m, request.Name, cancellationToken);
-                if (request.Description is not null)
-                    updateResult = TryUpdateDescription(m, request.Description, cancellationToken);
-                if (request.Unit is not null)
-                    updateResult = TryUpdateUnit(m, request.Unit, cancellationToken);
-                if (request.UserId is not null && request.UserId.HasValue)
-                    updateResult = TryReassignToUser(m, (Guid)request.UserId, cancellationToken);
-
-                return updateResult;
+                return Result.Combine(
+                    TryUpdateName(m, request.Name, cancellationToken),
+                    TryUpdateDescription(m, request.Description, cancellationToken),
+                    TryUpdateUnit(m, request.Unit, cancellationToken),
+                    TryReassignToUser(m, request.UserId, cancellationToken));
             });
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        if (measurementResult.IsFailure)
+            return Result.Failure<MeasurementResponse>(measurementResult.Errors);
+
+        try
+        {
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception)
+        {
+            return Result.Failure<MeasurementResponse>(ApplicationErrors.Measurement.CannotUpdateInDatabase);
+        }
 
         return measurementResult.Map(m => new MeasurementResponse
         {
@@ -64,48 +68,56 @@ public sealed class UpdateMeasurementCommandHandler(
         CancellationToken cancellationToken = default)
     {
         return await MeasurementId.FromGuid(measurementId)
-            .MapAsync(id => _measurementRepository.GetByIdAsync(id, cancellationToken));
+            .MapAsync(async id => await _measurementRepository.GetByIdAsync(id, cancellationToken));
     }
 
     private Result<Measurement> TryUpdateName(
         Measurement measurement,
-        string newName,
+        string? newName,
         CancellationToken cancellationToken = default)
     {
-        return Name.Create(newName)
+        return newName is null
+            ? measurement
+            : Name.Create(newName)
             .Map(measurement.UpdateName);
     }
 
     private Result<Measurement> TryUpdateDescription(
         Measurement measurement,
-        string newDescription,
+        string? newDescription,
         CancellationToken cancellationToken = default)
     {
-        return Description.Create(newDescription)
+        return newDescription is null
+            ? measurement
+            : Description.Create(newDescription)
             .Map(measurement.UpdateDescription);
     }
 
     private Result<Measurement> TryUpdateUnit(
         Measurement measurement,
-        string unit,
+        string? unit,
         CancellationToken cancellationToken = default)
     {
-        return (unit switch
-        {
-            "Kilogram" => Result.Success(MeasurementUnit.Kilogram),
-            "Centimeter" => Result.Success(MeasurementUnit.Centimeter),
-            "Percentage" => Result.Success(MeasurementUnit.Percentage),
-            _ => Result.Failure<MeasurementUnit>(DomainErrors.MeasurementUnit.Invalid)
-        })
-        .Map(measurement.UpdateUnit);
+        return unit is null
+            ? measurement
+            : (unit switch
+            {
+                "Kilogram" => Result.Success(MeasurementUnit.Kilogram),
+                "Centimeter" => Result.Success(MeasurementUnit.Centimeter),
+                "Percentage" => Result.Success(MeasurementUnit.Percentage),
+                _ => Result.Failure<MeasurementUnit>(DomainErrors.MeasurementUnit.Invalid)
+            })
+            .Map(measurement.UpdateUnit);
     }
 
     private Result<Measurement> TryReassignToUser(
         Measurement measurement,
-        Guid userId,
+        Guid? newUserId,
         CancellationToken cancellationToken = default)
     {
-        return UserId.FromGuid(userId)
+        return newUserId is null || !newUserId.HasValue
+            ? measurement
+            : UserId.FromGuid(newUserId.Value)
             .Map(measurement.ReassignToUser);
     }
 }
