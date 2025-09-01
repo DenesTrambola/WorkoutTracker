@@ -97,4 +97,15 @@ public class MeasurementData : Entity<MeasurementDataId>
             })
             .Map(_ => this);
     }
+
+    public Result<MeasurementData> ReassignToMeasurement(MeasurementId newMeasurementId)
+    {
+        return MeasurementId.EnsureNotNull(newMeasurementId)
+            .OnSuccess(mId =>
+            {
+                if (MeasurementId != mId)
+                    MeasurementId = mId;
+            })
+            .Map(_ => this);
+    }
 }
