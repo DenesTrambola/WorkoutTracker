@@ -7,7 +7,9 @@ using WorkoutTracker.Application.Measurements.Commands.CreateData;
 using WorkoutTracker.Application.Measurements.Commands.Delete;
 using WorkoutTracker.Application.Measurements.Commands.Update;
 using WorkoutTracker.Application.Measurements.Queries.GetAll;
+using WorkoutTracker.Application.Measurements.Queries.GetAllData;
 using WorkoutTracker.Application.Measurements.Queries.GetById;
+using WorkoutTracker.Application.Measurements.Queries.GetDataById;
 using WorkoutTracker.Web.Presentation.Primitives;
 using WorkoutTracker.Web.Presentation.Requests.Measurements;
 
@@ -117,9 +119,8 @@ public sealed class MeasurementController(ISender sender)
             });
     }
 
-    [HttpPost("{id:guid}")]
+    [HttpPost("data")]
     public async Task<IActionResult> CreateData(
-        Guid id,
         [FromBody] CreateMeasurementDataDto request,
         CancellationToken cancellationToken = default)
     {
@@ -128,7 +129,7 @@ public sealed class MeasurementController(ISender sender)
             Value = request.Value,
             MeasuredOn = request.MeasuredOn,
             Comment = request.Comment,
-            MeasurementId = id
+            MeasurementId = request.Id
         };
 
         var result = await Sender.Send(command, cancellationToken);
@@ -138,6 +139,47 @@ public sealed class MeasurementController(ISender sender)
             : BadRequest(new
             {
                 Message = "Failed to create measurement data",
+                Error = result.Errors
+            });
+    }
+
+    [HttpGet("data")]
+    public async Task<IActionResult> GetAllData(
+        [FromQuery] GetAllMeasurementDataDto request,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetAllMeasurementDataQuery
+        {
+            Value = request.Value,
+            MeasuredOn = request.MeasuredOn,
+            Comment = request.Comment,
+            MeasurementId = request.MeasurementId
+        };
+        var result = await Sender.Send(query, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.ValueOrDefault())
+            : BadRequest(new
+            {
+                Message = "Failed to retrieve measurement data",
+                Error = result.Errors
+            });
+    }
+
+    [HttpGet("data/{id:guid}")]
+    public async Task<IActionResult> GetDataById(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetMeasurementDataByIdQuery(id);
+
+        var result = await Sender.Send(query, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.ValueOrDefault())
+            : BadRequest(new
+            {
+                Message = "Failed to retrieve measurement data",
                 Error = result.Errors
             });
     }

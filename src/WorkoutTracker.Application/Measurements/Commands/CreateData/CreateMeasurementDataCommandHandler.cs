@@ -38,7 +38,7 @@ public sealed class CreateMeasurementDataCommandHandler(
                 valueResult.ValueOrDefault(),
                 measuredOn,
                 commentResult.ValueOrDefault()))
-            .OnSuccessAsync(async md => await _measurementRepository.Data.AddAsync(md, cancellationToken));
+            .OnSuccessAsync(async md => await _measurementRepository.AddDataAsync(md, cancellationToken));
 
         if (dataResult.IsFailure)
             return dataResult;

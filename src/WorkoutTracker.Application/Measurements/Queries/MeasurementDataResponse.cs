@@ -1,17 +1,14 @@
-namespace WorkoutTracker.Web.Presentation.Requests.Measurements;
+namespace WorkoutTracker.Application.Measurements.Queries;
 
-using System.ComponentModel.DataAnnotations;
-
-public sealed record CreateMeasurementDataDto
+public sealed record MeasurementDataResponse
 {
-    [Required]
     public required Guid Id { get; init; }
 
-    [Required]
     public required float Value { get; init; }
 
-    [Required]
     public required DateTime MeasuredOn { get; init; }
 
     public required string Comment { get; init; }
+
+    public required Guid MeasurementId { get; init; }
 }

@@ -10,8 +10,6 @@ using WorkoutTracker.Domain.Users.TypedIds;
 public interface IMeasurementRepository
     : IRepository<Measurement, MeasurementId>
 {
-    public IMeasurementDataRepository Data { get; }
-
     Task<Result<IEnumerable<Measurement>>> GetAllByUserAsync(
         UserId userId,
         CancellationToken cancellationToken = default);
@@ -19,5 +17,20 @@ public interface IMeasurementRepository
     Task<Result<Name>> ValidateNameUniqueness(
         Name name,
         UserId userId,
+        CancellationToken cancellationToken = default);
+
+    Task<Result<MeasurementData>> AddDataAsync(
+        MeasurementData data,
+        CancellationToken cancellationToken = default);
+
+    Task<Result> DeleteDataAsync(
+        MeasurementDataId dataId,
+        CancellationToken cancellationToken = default);
+
+    Task<Result<IEnumerable<MeasurementData>>> GetAllDataAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<Result<MeasurementData>> GetDataByIdAsync(
+        MeasurementDataId dataId,
         CancellationToken cancellationToken = default);
 }
