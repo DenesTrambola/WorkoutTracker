@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using WorkoutTracker.Application.Measurements.Errors;
-using WorkoutTracker.Application.Measurements.Queries;
 using WorkoutTracker.Application.Shared.Primitives.Messaging;
 using WorkoutTracker.Domain.Measurements;
 using WorkoutTracker.Domain.Measurements.Enums;
@@ -21,13 +20,13 @@ public sealed class UpdateMeasurementCommandHandler(
     IMeasurementRepository measurementRepository,
     IUserRepository userRepository,
     IUnitOfWork unitOfWork)
-    : ICommandHandler<UpdateMeasurementCommand, MeasurementResponse>
+    : ICommandHandler<UpdateMeasurementCommand>
 {
     private readonly IMeasurementRepository _measurementRepository = measurementRepository;
     private readonly IUserRepository _userRepository = userRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<Result<MeasurementResponse>> Handle(
+    public async Task<Result> Handle(
     UpdateMeasurementCommand request,
     CancellationToken cancellationToken = default)
     {
@@ -42,7 +41,7 @@ public sealed class UpdateMeasurementCommandHandler(
             });
 
         if (measurementResult.IsFailure)
-            return Result.Failure<MeasurementResponse>(measurementResult.Errors);
+            return Result.Failure(measurementResult.Errors);
 
         try
         {
@@ -50,17 +49,10 @@ public sealed class UpdateMeasurementCommandHandler(
         }
         catch (Exception)
         {
-            return Result.Failure<MeasurementResponse>(ApplicationErrors.Measurement.CannotUpdateInDatabase);
+            return Result.Failure(ApplicationErrors.Measurement.CannotUpdateInDatabase);
         }
 
-        return measurementResult.Map(m => new MeasurementResponse
-        {
-            Id = m.Id.IdValue,
-            Name = m.Name.Value,
-            Description = m.Description.Text ?? string.Empty,
-            Unit = m.Unit.ToString(),
-            UserId = m.UserId.IdValue
-        });
+        return measurementResult;
     }
 
     private async Task<Result<Measurement>> TryGetMeasurementByIdAsync(

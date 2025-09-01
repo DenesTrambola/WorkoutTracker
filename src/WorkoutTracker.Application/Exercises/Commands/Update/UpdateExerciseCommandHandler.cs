@@ -3,7 +3,6 @@ namespace WorkoutTracker.Application.Exercises.Commands.Update;
 using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Errors;
-using WorkoutTracker.Application.Exercises.Queries;
 using WorkoutTracker.Application.Shared.Primitives.Messaging;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Exercises.TypedIds;
@@ -18,13 +17,13 @@ public sealed class UpdateExerciseCommandHandler(
     IExerciseRepository exerciseRepository,
     IUserRepository userRepository,
     IUnitOfWork unitOfWork)
-    : ICommandHandler<UpdateExerciseCommand, ExerciseResponse>
+    : ICommandHandler<UpdateExerciseCommand>
 {
     private readonly IExerciseRepository _exerciseRepository = exerciseRepository;
     private readonly IUserRepository _userRepository = userRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<Result<ExerciseResponse>> Handle(
+    public async Task<Result> Handle(
         UpdateExerciseCommand request,
         CancellationToken cancellationToken = default)
     {
@@ -39,7 +38,7 @@ public sealed class UpdateExerciseCommandHandler(
             });
 
         if (exerciseResult.IsFailure)
-            return Result.Failure<ExerciseResponse>(exerciseResult.Errors);
+            return Result.Failure(exerciseResult.Errors);
 
         try
         {
@@ -47,17 +46,10 @@ public sealed class UpdateExerciseCommandHandler(
         }
         catch (Exception)
         {
-            return Result.Failure<ExerciseResponse>(ApplicationErrors.Exercise.CannotUpdateInDatabase);
+            return Result.Failure(ApplicationErrors.Exercise.CannotUpdateInDatabase);
         }
 
-        return exerciseResult.Map(e => new ExerciseResponse
-        {
-            Id = e.Id.IdValue,
-            Name = e.Name.Value,
-            TargetMuscle = e.TargetMuscle.Muscle,
-            IsPublic = e.Visibility.IsPublic,
-            UserId = e.UserId.IdValue
-        });
+        return exerciseResult;
     }
 
     private async Task<Result<Exercise>> TryGetExerciseByIdAsync(

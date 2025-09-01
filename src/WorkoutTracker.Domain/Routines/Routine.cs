@@ -79,6 +79,18 @@ public class Routine : AggregateRoot<RoutineId>
             .Map(_ => this);
     }
 
+    public Result<Routine> ReassignToUser(UserId newUserId)
+    {
+
+        return UserId.EnsureNotNull(newUserId)
+            .OnSuccess(uId =>
+            {
+                if (UserId != uId)
+                    UserId = uId;
+            })
+            .Map(_ => this);
+    }
+
     public Result<RoutineExercise> AddExercise(
         byte setCount,
         byte repCount,

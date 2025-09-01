@@ -93,9 +93,9 @@ public class Exercise : AggregateRoot<ExerciseId>
             .Map(_ => this);
     }
 
-    public Result<Exercise> ReassignToUser(UserId userId)
+    public Result<Exercise> ReassignToUser(UserId newUserId)
     {
-        return UserId.EnsureNotNull(userId)
+        return UserId.EnsureNotNull(newUserId)
             .OnSuccess(uId =>
             {
                 if (UserId != uId)

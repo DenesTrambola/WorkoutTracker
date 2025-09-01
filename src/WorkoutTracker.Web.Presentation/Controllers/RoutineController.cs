@@ -2,28 +2,27 @@ namespace WorkoutTracker.Web.Presentation.Controllers;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using WorkoutTracker.Application.Exercises.Commands.Create;
-using WorkoutTracker.Application.Exercises.Commands.Delete;
-using WorkoutTracker.Application.Exercises.Commands.Update;
-using WorkoutTracker.Application.Exercises.Queries.GetAll;
-using WorkoutTracker.Application.Exercises.Queries.GetById;
+using WorkoutTracker.Application.Routines.Commands.Create;
+using WorkoutTracker.Application.Routines.Commands.Delete;
+using WorkoutTracker.Application.Routines.Commands.Update;
+using WorkoutTracker.Application.Routines.Queries.GetAll;
+using WorkoutTracker.Application.Routines.Queries.GetById;
 using WorkoutTracker.Web.Presentation.Primitives;
-using WorkoutTracker.Web.Presentation.Requests.Exercises;
+using WorkoutTracker.Web.Presentation.Requests.Routines;
 
-[Route("api/exercises")]
-public sealed class ExerciseController(ISender sender)
+[Route("api/routines")]
+public sealed class RoutineController(ISender sender)
     : ApiController(sender)
 {
     [HttpPost]
     public async Task<IActionResult> Create(
-        [FromBody] CreateExerciseDto request,
+        [FromBody] CreateRoutineDto request,
         CancellationToken cancellationToken = default)
     {
-        var command = new CreateExerciseCommand
+        var command = new CreateRoutineCommand
         {
             Name = request.Name,
-            TargetMuscle = request.TargetMuscle,
-            IsPublic = request.IsPublic,
+            Description = request.Description,
             UserId = request.UserId
         };
 
@@ -33,14 +32,14 @@ public sealed class ExerciseController(ISender sender)
             ? CreatedAtAction(nameof(Create), null)
             : BadRequest(new
             {
-                Message = "Failed to create exercise",
+                Message = "Failed to create routine",
                 Errors = result.Errors
             });
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll(
-        [FromQuery] GetAllExercisesQuery query,
+        [FromQuery] GetAllRoutinesQuery query,
         CancellationToken cancellationToken = default)
     {
         var result = await Sender.Send(query, cancellationToken);
@@ -49,7 +48,7 @@ public sealed class ExerciseController(ISender sender)
             ? Ok(result.ValueOrDefault())
             : BadRequest(new
             {
-                Message = "Failed to retrieve exercises",
+                Message = "Failed to retrieve routines",
                 Errors = result.Errors
             });
     }
@@ -59,7 +58,7 @@ public sealed class ExerciseController(ISender sender)
         Guid id,
         CancellationToken cancellationToken = default)
     {
-        var query = new GetExerciseByIdQuery(id);
+        var query = new GetRoutineByIdQuery(id);
 
         var result = await Sender.Send(query, cancellationToken);
 
@@ -67,7 +66,7 @@ public sealed class ExerciseController(ISender sender)
             ? Ok(result.ValueOrDefault())
             : BadRequest(new
             {
-                Message = "Failed to retrieve exercise",
+                Message = "Failed to retrieve routine",
                 Errors = result.Errors
             });
     }
@@ -75,16 +74,15 @@ public sealed class ExerciseController(ISender sender)
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(
         Guid id,
-        [FromBody] UpdateExerciseDto request,
+        [FromBody] UpdateRoutineDto request,
         CancellationToken cancellationToken = default)
     {
-        var command = new UpdateExerciseCommand
+        var command = new UpdateRoutineCommand
         {
             Id = id,
             Name = request.Name,
-            TargetMuscle = request.TargetMuscle,
-            IsPublic = request.IsPublic,
-            UserId = request.UserId
+            Description = request.Description,
+            UserId = request.UserId,
         };
 
         var result = await Sender.Send(command, cancellationToken);
@@ -93,17 +91,17 @@ public sealed class ExerciseController(ISender sender)
             ? Ok()
             : BadRequest(new
             {
-                Message = "Failed to modify exercise",
+                Message = "Failed to modify routine",
                 Error = result.Errors
             });
     }
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete]
     public async Task<IActionResult> Delete(
         Guid id,
         CancellationToken cancellationToken = default)
     {
-        var command = new DeleteExerciseCommand(id);
+        var command = new DeleteRoutineCommand(id);
 
         var result = await Sender.Send(command, cancellationToken);
 
@@ -111,7 +109,7 @@ public sealed class ExerciseController(ISender sender)
             ? Ok()
             : BadRequest(new
             {
-                Message = "Failed to delete exercise",
+                Message = "Failed to delete routine",
                 Error = result.Errors
             });
     }

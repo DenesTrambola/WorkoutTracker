@@ -13,6 +13,10 @@ public partial class ApplicationErrors
             = Shared.Errors.ApplicationErrors.CannotAddToDatabase(
             nameof(User));
 
+        public static readonly Error CannotUpdateInDatabase
+            = Shared.Errors.ApplicationErrors.CannotUpdateInDatabase(
+            nameof(User));
+
         public static readonly Error CannotDeleteFromDatabase
             = Shared.Errors.ApplicationErrors.CannotDeleteFromDatabase(
             nameof(User));

@@ -1,10 +1,9 @@
 namespace WorkoutTracker.Application.Measurements.Commands.Update;
 
-using WorkoutTracker.Application.Measurements.Queries;
 using WorkoutTracker.Application.Shared.Primitives.Messaging;
 
 public sealed record UpdateMeasurementCommand
-    : ICommand<MeasurementResponse>
+    : ICommand
 {
     public required Guid Id { get; init; }
 

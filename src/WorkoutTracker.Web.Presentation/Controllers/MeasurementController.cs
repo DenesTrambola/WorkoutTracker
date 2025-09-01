@@ -90,7 +90,7 @@ public sealed class MeasurementController(ISender sender)
         var result = await Sender.Send(command, cancellationToken);
 
         return result.IsSuccess
-            ? Ok(result.ValueOrDefault())
+            ? Ok()
             : BadRequest(new
             {
                 Message = "Failed to modify measurement",
@@ -108,11 +108,11 @@ public sealed class MeasurementController(ISender sender)
         var result = await Sender.Send(command, cancellationToken);
 
         return result.IsSuccess
-             ? Ok()
-             : BadRequest(new
-             {
-                 Message = "Failed to delete measurement",
-                 Error = result.Errors
-             });
+            ? Ok()
+            : BadRequest(new
+            {
+                Message = "Failed to delete measurement",
+                Error = result.Errors
+            });
     }
 }
