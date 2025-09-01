@@ -25,6 +25,8 @@ public sealed class GetUserByIdQueryHandler(
             Id = u.Id.IdValue,
             Username = u.Username.Value,
             Email = u.Email.Value,
+            FirstName = u.FullName.FirstName,
+            LastName = u.FullName.LastName,
             Gender = (byte)u.Gender,
             Role = u.Role,
             BirthDate = u.BirthDate,

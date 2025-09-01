@@ -10,6 +10,10 @@ public sealed record UserResponse
 
     public required string Email { get; init; }
 
+    public required string FirstName { get; init; }
+
+    public required string LastName { get; init; }
+
     public required byte Gender { get; init; }
 
     public required UserRole Role { get; init; }

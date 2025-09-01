@@ -26,6 +26,14 @@ public sealed class GetAllUsersQueryHandler(
             usersResult = usersResult.Map(u => u.Where(
                 u => u.Email.Value == request.Email));
 
+        if (request.FirstName is not null)
+            usersResult = usersResult.Map(u => u.Where(
+                u => u.FullName.FirstName == request.FirstName));
+
+        if (request.LastName is not null)
+            usersResult = usersResult.Map(u => u.Where(
+                u => u.FullName.LastName == request.LastName));
+
         if (request.Gender is not null)
             usersResult = usersResult.Map(u => u.Where(
                 u => (byte)u.Gender == request.Gender));
@@ -47,6 +55,8 @@ public sealed class GetAllUsersQueryHandler(
             Id = u.Id.IdValue,
             Username = u.Username.Value,
             Email = u.Email.Value,
+            FirstName = u.FullName.FirstName,
+            LastName = u.FullName.LastName,
             Gender = (byte)u.Gender,
             Role = u.Role,
             BirthDate = u.BirthDate,

@@ -1,12 +1,12 @@
-namespace WorkoutTracker.Application.Users.Queries.GetAll;
+namespace WorkoutTracker.Web.Presentation.Requests.Users;
 
-using WorkoutTracker.Application.Shared.Primitives.Messaging;
 using WorkoutTracker.Domain.Users.Enums;
 
-public sealed record GetAllUsersQuery
-    : IQuery<IEnumerable<UserResponse>>
+public sealed record UpdateUserDto
 {
     public string? Username { get; init; }
+
+    public string? Password { get; init; }
 
     public string? Email { get; init; }
 
@@ -19,6 +19,4 @@ public sealed record GetAllUsersQuery
     public UserRole? Role { get; init; }
 
     public DateOnly? BirthDate { get; init; }
-
-    public DateTime? CreatedOn { get; init; }
 }
