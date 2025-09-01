@@ -3,10 +3,15 @@ namespace WorkoutTracker.Web.Presentation.Controllers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Application.Measurements.Commands.Create;
+using WorkoutTracker.Application.Measurements.Commands.CreateData;
 using WorkoutTracker.Application.Measurements.Commands.Delete;
+using WorkoutTracker.Application.Measurements.Commands.DeleteData;
 using WorkoutTracker.Application.Measurements.Commands.Update;
+using WorkoutTracker.Application.Measurements.Commands.UpdateData;
 using WorkoutTracker.Application.Measurements.Queries.GetAll;
+using WorkoutTracker.Application.Measurements.Queries.GetAllData;
 using WorkoutTracker.Application.Measurements.Queries.GetById;
+using WorkoutTracker.Application.Measurements.Queries.GetDataById;
 using WorkoutTracker.Web.Presentation.Primitives;
 using WorkoutTracker.Web.Presentation.Requests.Measurements;
 
@@ -112,6 +117,115 @@ public sealed class MeasurementController(ISender sender)
             : BadRequest(new
             {
                 Message = "Failed to delete measurement",
+                Error = result.Errors
+            });
+    }
+
+    [HttpPost("data")]
+    public async Task<IActionResult> CreateData(
+        [FromBody] CreateMeasurementDataDto request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new CreateMeasurementDataCommand
+        {
+            Value = request.Value,
+            MeasuredOn = request.MeasuredOn,
+            Comment = request.Comment,
+            MeasurementId = request.Id
+        };
+
+        var result = await Sender.Send(command, cancellationToken);
+
+        return result.IsSuccess
+            ? CreatedAtAction(nameof(CreateData), null)
+            : BadRequest(new
+            {
+                Message = "Failed to create measurement data",
+                Error = result.Errors
+            });
+    }
+
+    [HttpGet("data")]
+    public async Task<IActionResult> GetAllData(
+        [FromQuery] GetAllMeasurementDataDto request,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetAllMeasurementDataQuery
+        {
+            Value = request.Value,
+            MeasuredOn = request.MeasuredOn,
+            Comment = request.Comment,
+            MeasurementId = request.MeasurementId
+        };
+        var result = await Sender.Send(query, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.ValueOrDefault())
+            : BadRequest(new
+            {
+                Message = "Failed to retrieve measurement data",
+                Error = result.Errors
+            });
+    }
+
+    [HttpGet("data/{id:guid}")]
+    public async Task<IActionResult> GetDataById(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetMeasurementDataByIdQuery(id);
+
+        var result = await Sender.Send(query, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.ValueOrDefault())
+            : BadRequest(new
+            {
+                Message = "Failed to retrieve measurement data",
+                Error = result.Errors
+            });
+    }
+
+    [HttpPut("data/{id:guid}")]
+    public async Task<IActionResult> UpdateData(
+        Guid id,
+        [FromBody] UpdateMeasurementDataDto request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new UpdateMeasurementDataCommand
+        {
+            Id = id,
+            Value = request.Value,
+            MeasuredOn = request.MeasuredOn,
+            Comment = request.Comment,
+            MeasurementId = request.MeasurementId
+        };
+
+        var result = await Sender.Send(command, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok()
+            : BadRequest(new
+            {
+                Message = "Failed to modify measurement data",
+                Error = result.Errors
+            });
+    }
+
+    [HttpDelete("data/{id:guid}")]
+    public async Task<IActionResult> DeleteData(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new DeleteMeasurementDataCommand(id);
+
+        var result = await Sender.Send(command, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok()
+            : BadRequest(new
+            {
+                Message = "Failed to delete measurement data",
                 Error = result.Errors
             });
     }

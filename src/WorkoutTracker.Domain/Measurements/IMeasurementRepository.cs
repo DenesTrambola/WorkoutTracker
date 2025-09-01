@@ -18,4 +18,19 @@ public interface IMeasurementRepository
         Name name,
         UserId userId,
         CancellationToken cancellationToken = default);
+
+    Task<Result<MeasurementData>> AddDataAsync(
+        MeasurementData data,
+        CancellationToken cancellationToken = default);
+
+    Task<Result> DeleteDataAsync(
+        MeasurementDataId dataId,
+        CancellationToken cancellationToken = default);
+
+    Task<Result<IEnumerable<MeasurementData>>> GetAllDataAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<Result<MeasurementData>> GetDataByIdAsync(
+        MeasurementDataId dataId,
+        CancellationToken cancellationToken = default);
 }

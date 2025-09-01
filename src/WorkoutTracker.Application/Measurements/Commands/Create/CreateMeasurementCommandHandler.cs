@@ -3,6 +3,7 @@ namespace WorkoutTracker.Application.Measurements.Commands.Create;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using WorkoutTracker.Application.Measurements.Errors;
 using WorkoutTracker.Application.Shared.Primitives.Messaging;
 using WorkoutTracker.Domain.Measurements;
 using WorkoutTracker.Domain.Measurements.Enums;
@@ -29,7 +30,7 @@ public sealed class CreateMeasurementCommandHandler(
     {
         var userIdResult = await ValidateUserIdAsync(request.UserId, cancellationToken);
         var nameResult = await userIdResult.OnSuccessAsync(
-            async () => await CreateAndValidateNameAsync(
+            async () => await ValidateNameAsync(
                 request.Name, userIdResult.ValueOrDefault(), cancellationToken));
 
         var descriptionResult = Description.Create(request.Description);
@@ -49,11 +50,22 @@ public sealed class CreateMeasurementCommandHandler(
                 userIdResult.ValueOrDefault()))
             .OnSuccessAsync(async m => await _measurementRepository.AddAsync(m, cancellationToken));
 
-        return measurementResult.OnSuccess(_ =>
-            _unitOfWork.SaveChangesAsync(cancellationToken));
+        if (measurementResult.IsFailure)
+            return measurementResult;
+
+        try
+        {
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception)
+        {
+            return Result.Failure(ApplicationErrors.Measurement.CannotAddToDatabase);
+        }
+
+        return measurementResult;
     }
 
-    private async Task<Result<Name>> CreateAndValidateNameAsync(
+    private async Task<Result<Name>> ValidateNameAsync(
         string name,
         UserId userId,
         CancellationToken cancellationToken)

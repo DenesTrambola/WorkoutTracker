@@ -27,7 +27,7 @@ public sealed class GetAllMeasurementsQueryHandler(
 
         if (request.Description is not null)
             measurementsResult = measurementsResult.Map(m => m.Where(
-                m => m.Description.Text is not null && m.Description.Text == request.Description));
+                m => m.Description.Text == request.Description));
 
         if (request.Unit is not null)
             measurementsResult = measurementsResult.Map(m => m.Where(
