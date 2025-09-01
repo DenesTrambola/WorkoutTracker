@@ -10,7 +10,7 @@ public static partial class DomainErrors
             nameof(MeasurementDataValue));
 
         public static Error Invalid => new(
-            $"{nameof(MeasurementDataValue)}.InvalidPosition",
+            $"{nameof(MeasurementDataValue)}.InvalidValue",
             "Data value must be greater than or equal to 1.");
     }
 }

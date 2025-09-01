@@ -16,6 +16,8 @@ public sealed class MeasurementRepository(
     AppDbContext dbContext)
     : IMeasurementRepository
 {
+    public IMeasurementDataRepository Data { get; } = new MeasurementDataRepository(dbContext);
+
     private readonly AppDbContext _dbContext = dbContext;
 
     public async Task<Result<Measurement>> AddAsync(

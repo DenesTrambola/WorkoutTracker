@@ -3,6 +3,7 @@ namespace WorkoutTracker.Web.Presentation.Controllers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Application.Measurements.Commands.Create;
+using WorkoutTracker.Application.Measurements.Commands.CreateData;
 using WorkoutTracker.Application.Measurements.Commands.Delete;
 using WorkoutTracker.Application.Measurements.Commands.Update;
 using WorkoutTracker.Application.Measurements.Queries.GetAll;
@@ -112,6 +113,31 @@ public sealed class MeasurementController(ISender sender)
             : BadRequest(new
             {
                 Message = "Failed to delete measurement",
+                Error = result.Errors
+            });
+    }
+
+    [HttpPost("{id:guid}")]
+    public async Task<IActionResult> CreateData(
+        Guid id,
+        [FromBody] CreateMeasurementDataDto request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new CreateMeasurementDataCommand
+        {
+            Value = request.Value,
+            MeasuredOn = request.MeasuredOn,
+            Comment = request.Comment,
+            MeasurementId = id
+        };
+
+        var result = await Sender.Send(command, cancellationToken);
+
+        return result.IsSuccess
+            ? CreatedAtAction(nameof(CreateData), null)
+            : BadRequest(new
+            {
+                Message = "Failed to create measurement data",
                 Error = result.Errors
             });
     }

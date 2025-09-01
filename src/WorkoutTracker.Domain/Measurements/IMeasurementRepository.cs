@@ -10,6 +10,8 @@ using WorkoutTracker.Domain.Users.TypedIds;
 public interface IMeasurementRepository
     : IRepository<Measurement, MeasurementId>
 {
+    public IMeasurementDataRepository Data { get; }
+
     Task<Result<IEnumerable<Measurement>>> GetAllByUserAsync(
         UserId userId,
         CancellationToken cancellationToken = default);
