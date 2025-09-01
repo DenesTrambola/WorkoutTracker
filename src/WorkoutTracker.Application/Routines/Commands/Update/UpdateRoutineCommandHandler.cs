@@ -3,7 +3,6 @@ namespace WorkoutTracker.Application.Routines.Commands.Update;
 using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Routines.Errors;
-using WorkoutTracker.Application.Routines.Queries;
 using WorkoutTracker.Application.Shared.Primitives.Messaging;
 using WorkoutTracker.Domain.Routines;
 using WorkoutTracker.Domain.Routines.TypedIds;
@@ -17,13 +16,13 @@ public sealed class UpdateRoutineCommandHandler(
     IRoutineRepository routineRepository,
     IUserRepository userRepository,
     IUnitOfWork unitOfWork)
-    : ICommandHandler<UpdateRoutineCommand, RoutineResponse>
+    : ICommandHandler<UpdateRoutineCommand>
 {
     private readonly IRoutineRepository _routineRepository = routineRepository;
     private readonly IUserRepository _userRepository = userRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<Result<RoutineResponse>> Handle(
+    public async Task<Result> Handle(
         UpdateRoutineCommand request,
         CancellationToken cancellationToken = default)
     {
@@ -37,7 +36,7 @@ public sealed class UpdateRoutineCommandHandler(
             });
 
         if (routineResult.IsFailure)
-            return Result.Failure<RoutineResponse>(routineResult.Errors);
+            return Result.Failure(routineResult.Errors);
 
         try
         {
@@ -45,16 +44,10 @@ public sealed class UpdateRoutineCommandHandler(
         }
         catch (Exception)
         {
-            return Result.Failure<RoutineResponse>(ApplicationErrors.Routine.CannotUpdateInDatabase);
+            return Result.Failure(ApplicationErrors.Routine.CannotUpdateInDatabase);
         }
 
-        return routineResult.Map(r => new RoutineResponse
-        {
-            Id = r.Id.IdValue,
-            Name = r.Name.Value,
-            Description = r.Description.Text ?? string.Empty,
-            UserId = r.UserId.IdValue
-        });
+        return routineResult;
     }
 
     private async Task<Result<Routine>> TryGetRoutineByIdAsync(

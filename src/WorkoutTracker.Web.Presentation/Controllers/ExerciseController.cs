@@ -90,7 +90,7 @@ public sealed class ExerciseController(ISender sender)
         var result = await Sender.Send(command, cancellationToken);
 
         return result.IsSuccess
-            ? Ok(result.ValueOrDefault())
+            ? Ok()
             : BadRequest(new
             {
                 Message = "Failed to modify exercise",

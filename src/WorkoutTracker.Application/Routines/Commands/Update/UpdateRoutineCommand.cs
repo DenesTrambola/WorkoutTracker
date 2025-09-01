@@ -1,10 +1,9 @@
 namespace WorkoutTracker.Application.Routines.Commands.Update;
 
-using WorkoutTracker.Application.Routines.Queries;
 using WorkoutTracker.Application.Shared.Primitives.Messaging;
 
 public sealed record UpdateRoutineCommand
-    : ICommand<RoutineResponse>
+    : ICommand
 {
     public required Guid Id { get; init; }
 
