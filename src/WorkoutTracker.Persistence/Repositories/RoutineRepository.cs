@@ -130,6 +130,6 @@ public sealed class RoutineRepository(
         return Result.Ensure(
             await _dbContext.RoutineExercises.FirstOrDefaultAsync(r => r.Id == exerciseId, cancellationToken),
             r => r is not null,
-            ApplicationErrors.Routine.NotFound)!;
+            ApplicationErrors.RoutineExercise.NotFound)!;
     }
 }

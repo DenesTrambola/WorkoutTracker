@@ -6,9 +6,11 @@ using WorkoutTracker.Application.Routines.Commands.Create;
 using WorkoutTracker.Application.Routines.Commands.CreateExercise;
 using WorkoutTracker.Application.Routines.Commands.Delete;
 using WorkoutTracker.Application.Routines.Commands.Update;
+using WorkoutTracker.Application.Routines.Commands.UpdateExercise;
 using WorkoutTracker.Application.Routines.Queries.GetAll;
 using WorkoutTracker.Application.Routines.Queries.GetAllExercises;
 using WorkoutTracker.Application.Routines.Queries.GetById;
+using WorkoutTracker.Application.Routines.Queries.GetExerciseById;
 using WorkoutTracker.Web.Presentation.Primitives;
 using WorkoutTracker.Web.Presentation.Requests.Routines;
 
@@ -154,6 +156,53 @@ public sealed class RoutineController(ISender sender)
             : BadRequest(new
             {
                 Message = "Failed to retrieve exercises from routine",
+                Errors = result.Errors
+            });
+    }
+
+    [HttpGet("exercises/{id:guid}")]
+    public async Task<IActionResult> GetExerciseById(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetRoutineExerciseByIdQuery(id);
+
+        var result = await Sender.Send(query, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.ValueOrDefault())
+            : BadRequest(new
+            {
+                Message = "Failed to retrieve exercise from routine",
+                Errors = result.Errors
+            });
+    }
+
+    [HttpPut("exercises/{id:guid}")]
+    public async Task<IActionResult> UpdateExercise(
+        Guid id,
+        [FromBody] UpdateRoutineExerciseDto request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new UpdateRoutineExerciseCommand
+        {
+            Id = id,
+            SetCount = request.SetCount,
+            RepCount = request.RepCount,
+            RestTimeBetweenSets = request.RestTimeBetweenSets,
+            Comment = request.Comment,
+            Position = request.Position,
+            RoutineId = request.RoutineId,
+            ExerciseId = request.ExerciseId
+        };
+
+        var result = await Sender.Send(command, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok()
+            : BadRequest(new
+            {
+                Message = "Failed to update exercise from routine",
                 Errors = result.Errors
             });
     }
