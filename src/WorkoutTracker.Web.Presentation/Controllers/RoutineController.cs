@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Application.Routines.Commands.Create;
 using WorkoutTracker.Application.Routines.Commands.CreateExercise;
 using WorkoutTracker.Application.Routines.Commands.Delete;
+using WorkoutTracker.Application.Routines.Commands.DeleteExercise;
 using WorkoutTracker.Application.Routines.Commands.Update;
 using WorkoutTracker.Application.Routines.Commands.UpdateExercise;
 using WorkoutTracker.Application.Routines.Queries.GetAll;
@@ -202,7 +203,25 @@ public sealed class RoutineController(ISender sender)
             ? Ok()
             : BadRequest(new
             {
-                Message = "Failed to update exercise from routine",
+                Message = "Failed to update exercise in routine",
+                Errors = result.Errors
+            });
+    }
+
+    [HttpDelete("exercises/{id:guid}")]
+    public async Task<IActionResult> RemoveExercise(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new DeleteRoutineExerciseCommand(id);
+
+        var result = await Sender.Send(command, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok()
+            : BadRequest(new
+            {
+                Message = "Failed to remove exercise from routine",
                 Errors = result.Errors
             });
     }
