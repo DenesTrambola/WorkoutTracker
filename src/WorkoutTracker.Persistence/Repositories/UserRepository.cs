@@ -19,7 +19,9 @@ public sealed class UserRepository : IUserRepository
         _dbContext = dbContext;
     }
 
-    public async Task<Result<User>> AddAsync(User entity, CancellationToken cancellationToken = default)
+    public async Task<Result<User>> AddAsync(
+        User entity,
+        CancellationToken cancellationToken = default)
     {
         try
         {
@@ -32,7 +34,24 @@ public sealed class UserRepository : IUserRepository
         }
     }
 
-    public async Task<Result> DeleteAsync(UserId id, CancellationToken cancellationToken = default)
+    public async Task<Result<Workout>> AddWorkoutAsync(
+        Workout workout,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await _dbContext.Workouts.AddAsync(workout, cancellationToken);
+            return Result.Success(workout);
+        }
+        catch (Exception)
+        {
+            return Result.Failure<Workout>(ApplicationErrors.Workout.CannotAddToDatabase);
+        }
+    }
+
+    public async Task<Result> DeleteAsync(
+        UserId id,
+        CancellationToken cancellationToken = default)
     {
         var userResult = await GetByIdAsync(id, cancellationToken);
 
@@ -47,13 +66,40 @@ public sealed class UserRepository : IUserRepository
         }
     }
 
-    public async Task<Result<IEnumerable<User>>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<Result> DeleteWorkoutAsync(
+        WorkoutId id,
+        CancellationToken cancellationToken = default)
+    {
+        var workoutResult = await GetWorkoutByIdAsync(id, cancellationToken);
+
+        try
+        {
+            _dbContext.Workouts.Remove(workoutResult.ValueOrDefault()!);
+            return Result.Success();
+        }
+        catch (Exception)
+        {
+            return Result.Failure(ApplicationErrors.Workout.CannotDeleteFromDatabase);
+        }
+    }
+
+    public async Task<Result<IEnumerable<User>>> GetAllAsync(
+        CancellationToken cancellationToken = default)
     {
         var users = await _dbContext.Users.ToListAsync(cancellationToken);
         return Result.Success(users.AsEnumerable());
     }
 
-    public async Task<Result<User>> GetByIdAsync(UserId id, CancellationToken cancellationToken = default)
+    public async Task<Result<IEnumerable<Workout>>> GetAllWorkoutsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var workouts = await _dbContext.Workouts.ToListAsync(cancellationToken);
+        return Result.Success(workouts.AsEnumerable());
+    }
+
+    public async Task<Result<User>> GetByIdAsync(
+        UserId id,
+        CancellationToken cancellationToken = default)
     {
         return Result.Ensure(
             await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken),
@@ -61,7 +107,19 @@ public sealed class UserRepository : IUserRepository
             ApplicationErrors.User.NotFound)!;
     }
 
-    public async Task<Result<User>> GetByUsernameAsync(Username username, CancellationToken cancellationToken = default)
+    public async Task<Result<Workout>> GetWorkoutByIdAsync(
+        WorkoutId id,
+        CancellationToken cancellationToken = default)
+    {
+        return Result.Ensure(
+            await _dbContext.Workouts.FirstOrDefaultAsync(w => w.Id == id, cancellationToken),
+            w => w is not null,
+            ApplicationErrors.Workout.NotFound)!;
+    }
+
+    public async Task<Result<User>> GetByUsernameAsync(
+        Username username,
+        CancellationToken cancellationToken = default)
     {
         return Result.Ensure(
             await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username, cancellationToken),
@@ -69,7 +127,9 @@ public sealed class UserRepository : IUserRepository
             ApplicationErrors.User.NotFound)!;
     }
 
-    public async Task<Result<Email>> ValidateEmailUniqueness(Email email, CancellationToken cancellationToken = default)
+    public async Task<Result<Email>> ValidateEmailUniqueness(
+        Email email,
+        CancellationToken cancellationToken = default)
     {
         return Result.Ensure(
             !(await _dbContext.Users.AnyAsync(u => u.Email == email, cancellationToken)),
@@ -77,7 +137,9 @@ public sealed class UserRepository : IUserRepository
             .OnSuccess(() => email);
     }
 
-    public async Task<Result<Username>> ValidateUsernameUniqueness(Username username, CancellationToken cancellationToken = default)
+    public async Task<Result<Username>> ValidateUsernameUniqueness(
+        Username username,
+        CancellationToken cancellationToken = default)
     {
         return Result.Ensure(
             !(await _dbContext.Users.AnyAsync(u => u.Username == username, cancellationToken)),

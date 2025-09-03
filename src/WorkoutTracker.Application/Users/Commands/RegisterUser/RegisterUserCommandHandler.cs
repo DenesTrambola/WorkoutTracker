@@ -7,6 +7,7 @@ using MediatR;
 using WorkoutTracker.Application.Shared.Models;
 using WorkoutTracker.Application.Shared.Primitives;
 using WorkoutTracker.Application.Shared.Primitives.Messaging;
+using WorkoutTracker.Application.Users.Errors;
 using WorkoutTracker.Application.Users.Primitives;
 using WorkoutTracker.Domain.Shared.Primitives;
 using WorkoutTracker.Domain.Shared.Results;
@@ -45,7 +46,7 @@ public sealed class RegisterUserCommandHandler(
 
         var birthDate = request.BirthDate;
 
-        return (await (await Result.Combine(
+        var userResult = await (await Result.Combine(
             usernameResult,
             passwordHashResult,
             emailResult,
@@ -59,8 +60,21 @@ public sealed class RegisterUserCommandHandler(
                 UserRole.User,
                 birthDate))
             .OnSuccessAsync(async u => await _userRepository.AddAsync(u, cancellationToken)))
-            .OnSuccessAsync(async u => await SendRegistrationSuccessEmail(u)))
-            .OnSuccess(() => _unitOfWork.SaveChangesAsync());
+            .OnSuccessAsync(async u => await SendRegistrationSuccessEmail(u));
+
+        if (userResult.IsFailure)
+            return userResult;
+
+        try
+        {
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception)
+        {
+            return Result.Failure(ApplicationErrors.User.CannotAddToDatabase);
+        }
+
+        return userResult;
     }
 
     private async Task<Result<Username>> CreateAndValidateUsernameAsync(
