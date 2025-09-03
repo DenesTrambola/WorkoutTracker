@@ -1,5 +1,6 @@
 namespace WorkoutTracker.Domain.Users;
 
+using System.Security.Cryptography;
 using WorkoutTracker.Domain.Shared.Primitives;
 using WorkoutTracker.Domain.Shared.Results;
 using WorkoutTracker.Domain.Users.TypedIds;
@@ -18,5 +19,20 @@ public interface IUserRepository
 
     Task<Result<User>> GetByUsernameAsync(
         Username username,
+        CancellationToken cancellationToken = default);
+
+    Task<Result<IEnumerable<Workout>>> GetAllWorkoutsAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<Result<Workout>> GetWorkoutByIdAsync(
+        WorkoutId id,
+        CancellationToken cancellationToken = default);
+
+    Task<Result<Workout>> AddWorkoutAsync(
+        Workout workout,
+        CancellationToken cancellationToken = default);
+
+    Task<Result> DeleteWorkoutAsync(
+        WorkoutId id,
         CancellationToken cancellationToken = default);
 }

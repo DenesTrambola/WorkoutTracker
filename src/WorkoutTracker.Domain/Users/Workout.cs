@@ -111,4 +111,18 @@ public class Workout : Entity<WorkoutId>
             .OnSuccess(c => Comment = c)
             .Map(_ => this);
     }
+
+    public Result<Workout> ReassignToUser(UserId newUserId)
+    {
+        return UserId.EnsureNotNull(newUserId)
+            .OnSuccess(uId => UserId = uId)
+            .Map(_ => this);
+    }
+
+    public Result<Workout> ReassignToRoutine(RoutineId newRoutineId)
+    {
+        return RoutineId.EnsureNotNull(newRoutineId)
+            .OnSuccess(rId => RoutineId = rId)
+            .Map(_ => this);
+    }
 }

@@ -1,4 +1,4 @@
-namespace WorkoutTracker.Application.Routines.Commands.Delete;
+namespace WorkoutTracker.Application.Routines.Commands.DeleteExercise;
 
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,26 +9,26 @@ using WorkoutTracker.Domain.Routines.TypedIds;
 using WorkoutTracker.Domain.Shared.Primitives;
 using WorkoutTracker.Domain.Shared.Results;
 
-public sealed class DeleteRoutineCommandHandler(
+public sealed class DeleteRoutineExerciseCommandHandler(
     IRoutineRepository routineRepository,
     IUnitOfWork unitOfWork)
-    : ICommandHandler<DeleteRoutineCommand>
+    : ICommandHandler<DeleteRoutineExerciseCommand>
 {
     private readonly IRoutineRepository _routineRepository = routineRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<Result> Handle(
-        DeleteRoutineCommand request,
+        DeleteRoutineExerciseCommand request,
         CancellationToken cancellationToken = default)
     {
-        var routineIdResult = RoutineId.FromGuid(request.Id);
+        var routineExerciseId = RoutineExerciseId.FromGuid(request.Id);
 
-        var routineResult = await routineIdResult.MapAsync(
-            async id => await _routineRepository.GetByIdAsync(id, cancellationToken));
+        var routineExerciseResult = await routineExerciseId.MapAsync(
+            async id => await _routineRepository.GetExerciseByIdAsync(id, cancellationToken));
 
-        var deleteResult = await routineResult.OnSuccessAsync(
-            async r => await _routineRepository.DeleteAsync(
-                routineIdResult.ValueOrDefault(), cancellationToken));
+        var deleteResult = await routineExerciseResult.OnSuccessAsync(
+            async re => await _routineRepository.DeleteExerciseAsync(
+                routineExerciseId.ValueOrDefault(),cancellationToken));
 
         try
         {
@@ -36,7 +36,7 @@ public sealed class DeleteRoutineCommandHandler(
         }
         catch (Exception)
         {
-            return Result.Failure(ApplicationErrors.Routine.CannotDeleteFromDatabase);
+            return Result.Failure(ApplicationErrors.RoutineExercise.CannotDeleteFromDatabase);
         }
 
         return deleteResult;

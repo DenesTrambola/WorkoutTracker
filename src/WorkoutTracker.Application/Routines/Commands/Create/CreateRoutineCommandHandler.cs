@@ -37,6 +37,9 @@ public sealed class CreateRoutineCommandHandler(
                 userIdResult.ValueOrDefault()))
             .OnSuccessAsync(async r => await _routineRepository.AddAsync(r));
 
+        if (routineResult.IsFailure)
+            return routineResult;
+
         try
         {
             await _unitOfWork.SaveChangesAsync(cancellationToken);

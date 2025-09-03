@@ -155,4 +155,26 @@ public class RoutineExercise : Entity<RoutineExerciseId>
             })
             .Map(_ => this);
     }
+
+    public Result<RoutineExercise> ReassignToRoutine(RoutineId newRoutineId)
+    {
+        return RoutineId.EnsureNotNull(newRoutineId)
+            .OnSuccess(r =>
+            {
+                if (RoutineId != r)
+                    RoutineId = r;
+            })
+            .Map(_ => this);
+    }
+
+    public Result<RoutineExercise> ReassignToExercise(ExerciseId newExerciseId)
+    {
+        return ExerciseId.EnsureNotNull(newExerciseId)
+            .OnSuccess(r =>
+            {
+                if (ExerciseId != r)
+                    ExerciseId = r;
+            })
+            .Map(_ => this);
+    }
 }

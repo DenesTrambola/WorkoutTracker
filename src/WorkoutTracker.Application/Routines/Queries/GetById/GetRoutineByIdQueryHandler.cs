@@ -20,12 +20,12 @@ public sealed class GetRoutineByIdQueryHandler(
         var routineResult = await RoutineId.FromGuid(request.Id)
             .MapAsync(async id => await _routineRepository.GetByIdAsync(id, cancellationToken));
 
-        return routineResult.Map(e => new RoutineResponse
+        return routineResult.Map(r => new RoutineResponse
         {
-            Id = e.Id.IdValue,
-            Name = e.Name.Value,
-            Description = e.Description.Text ?? string.Empty,
-            UserId = e.UserId.IdValue
+            Id = r.Id.IdValue,
+            Name = r.Name.Value,
+            Description = r.Description.Text ?? string.Empty,
+            UserId = r.UserId.IdValue
         });
     }
 }
