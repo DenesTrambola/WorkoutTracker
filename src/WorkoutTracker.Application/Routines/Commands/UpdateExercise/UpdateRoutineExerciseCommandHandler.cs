@@ -41,7 +41,7 @@ public sealed class UpdateRoutineExerciseCommandHandler(
             });
 
         if (routineExerciseResult.IsFailure)
-            return Result.Failure(routineExerciseResult.Errors);
+            return routineExerciseResult;
 
         try
         {

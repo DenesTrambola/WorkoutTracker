@@ -4,8 +4,10 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Application.Users.Commands.AddWorkoutToUser;
 using WorkoutTracker.Application.Users.Commands.Delete;
+using WorkoutTracker.Application.Users.Commands.DeleteWorkout;
 using WorkoutTracker.Application.Users.Commands.RegisterUser;
 using WorkoutTracker.Application.Users.Commands.Update;
+using WorkoutTracker.Application.Users.Commands.UpdateWorkout;
 using WorkoutTracker.Application.Users.Queries.GetAll;
 using WorkoutTracker.Application.Users.Queries.GetAllWorkouts;
 using WorkoutTracker.Application.Users.Queries.GetById;
@@ -155,6 +157,52 @@ public sealed class UserController(ISender sender)
             : BadRequest(new
             {
                 Message = "Failed to retrieve workout",
+                Errors = result.Errors
+            });
+    }
+
+    [HttpPut("workouts/{id:guid}")]
+    public async Task<IActionResult> UpdateWorkout(
+        Guid id,
+        [FromBody] UpdateWorkoutDto request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new UpdateWorkoutCommand
+        {
+            Id = id,
+            StartTime = request.StartTime,
+            EndTime = request.EndTime,
+            RestTimeBetweenExercises = request.RestTimeBetweenExercises,
+            Comment = request.Comment,
+            UserId = request.UserId,
+            RoutineId = request.RoutineId
+        };
+
+        var result = await Sender.Send(command, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok()
+            : BadRequest(new
+            {
+                Message = "Failed to modify workout",
+                Errors = result.Errors
+            });
+    }
+
+    [HttpDelete("workouts/{id:guid}")]
+    public async Task<IActionResult> RemoveWorkout(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new DeleteWorkoutCommand(id);
+
+        var result = await Sender.Send(command, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok()
+            : BadRequest(new
+            {
+                Message = "Failed to remove workout",
                 Errors = result.Errors
             });
     }
