@@ -27,5 +27,9 @@ public static partial class DomainErrors
 
         public static readonly Error NotFound = Shared.Errors.DomainErrors.NotFound(
             nameof(RoutineExercise));
+
+        public static readonly Error ReorderIncomplete = new Error(
+            $"{nameof(RoutineExercise)}.ReorderIncomplete",
+            "An error occured while trying to reorder the exercises in the routine.");
     }
 }
