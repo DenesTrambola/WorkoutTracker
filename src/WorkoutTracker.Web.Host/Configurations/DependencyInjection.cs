@@ -117,6 +117,12 @@ internal static class DependencyInjection
 
         services.AddEndpointsApiExplorer();
 
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFrontend", policy
+                => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+        });
+
         return services;
     }
 
