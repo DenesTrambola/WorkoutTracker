@@ -6,6 +6,7 @@ using WorkoutTracker.Application.Routines.Commands.Create;
 using WorkoutTracker.Application.Routines.Commands.CreateExercise;
 using WorkoutTracker.Application.Routines.Commands.Delete;
 using WorkoutTracker.Application.Routines.Commands.DeleteExercise;
+using WorkoutTracker.Application.Routines.Commands.ReorderExercises;
 using WorkoutTracker.Application.Routines.Commands.Update;
 using WorkoutTracker.Application.Routines.Commands.UpdateExercise;
 using WorkoutTracker.Application.Routines.Queries.GetAll;
@@ -222,6 +223,29 @@ public sealed class RoutineController(ISender sender)
             : BadRequest(new
             {
                 Message = "Failed to remove exercise from routine",
+                Errors = result.Errors
+            });
+    }
+
+    [HttpPut("{id:guid}/reorder")]
+    public async Task<IActionResult> ReorderExercises(
+        Guid id,
+        [FromBody] ReorderExerciseInRoutineDto request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new ReorderExercisesInRoutineCommand
+        {
+            RoutineId = id,
+            ExerciseIdsInOrder = request.ExerciseIds
+        };
+
+        var result = await Sender.Send(command, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok()
+            : BadRequest(new
+            {
+                Message = "Failed to reorder exercise in routine",
                 Errors = result.Errors
             });
     }

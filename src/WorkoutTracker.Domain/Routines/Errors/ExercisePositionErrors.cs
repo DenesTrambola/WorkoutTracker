@@ -12,5 +12,9 @@ public static partial class DomainErrors
         public static Error Invalid => new(
             $"{nameof(RoutineExercise)}.InvalidPosition",
             "Position must be greater than or equal to 1.");
+
+        public static Error DuplicatePositions => new(
+            $"{nameof(RoutineExercise)}.DuplicatePositions",
+            "Duplicate positions are not allowed.");
     }
 }

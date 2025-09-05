@@ -11,7 +11,7 @@ using WorkoutTracker.Domain.Users.TypedIds;
 
 public class Routine : AggregateRoot<RoutineId>
 {
-    private readonly List<RoutineExercise> _routineExercises = [];
+    private List<RoutineExercise> _routineExercises = [];
 
     public Name Name { get; private set; }
     public Description Description { get; private set; }
@@ -121,5 +121,27 @@ public class Routine : AggregateRoot<RoutineId>
             .Ensure(re => re is not null, DomainErrors.RoutineExercise.NotFound)
             .Ensure(re => _routineExercises.Remove(re!), DomainErrors.RoutineExercise.CannotRemove)
             .Map(_ => this);
+    }
+
+    public Result<Routine> ReorderExercises(IReadOnlyList<RoutineExerciseId> orderedExerciseIds)
+    {
+        if (orderedExerciseIds.Count != _routineExercises.Count)
+            return Result.Failure<Routine>(DomainErrors.RoutineExercise.ReorderIncomplete);
+
+        var currentIds = _routineExercises.Select(re => re.Id).ToHashSet();
+        if (!orderedExerciseIds.All(id => currentIds.Contains(id)))
+            return Result.Failure<Routine>(DomainErrors.RoutineExercise.NotFound);
+
+        for (int i = 0; i < orderedExerciseIds.Count; i++)
+        {
+            var exercise = _routineExercises.First(re => re.Id == orderedExerciseIds[i]);
+            exercise.UpdatePosition(ExercisePosition.Create((byte)(i + 1)).ValueOrDefault());
+        }
+
+        _routineExercises = _routineExercises
+            .OrderBy(re => re.Position.Value)
+            .ToList();
+
+        return Result.Success(this);
     }
 }

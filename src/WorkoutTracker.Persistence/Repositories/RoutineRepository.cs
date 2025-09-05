@@ -89,7 +89,9 @@ public sealed class RoutineRepository(
     public async Task<Result<IEnumerable<Routine>>> GetAllAsync(
         CancellationToken cancellationToken = default)
     {
-        var routines = await _dbContext.Routines.ToListAsync(cancellationToken);
+        var routines = await _dbContext.Routines
+            .Include(r => r.RoutineExercises)
+            .ToListAsync(cancellationToken);
 
         return Result.Success(routines.AsEnumerable());
     }
@@ -118,7 +120,9 @@ public sealed class RoutineRepository(
         CancellationToken cancellationToken = default)
     {
         return Result.Ensure(
-            await _dbContext.Routines.FirstOrDefaultAsync(r => r.Id == id, cancellationToken),
+            await _dbContext.Routines
+            .Include(r => r.RoutineExercises)
+            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken),
             r => r is not null,
             ApplicationErrors.Routine.NotFound)!;
     }
